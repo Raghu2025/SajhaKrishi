@@ -8,36 +8,6 @@
       overflow: hidden;
     }
 
-    /* ── LEFT PANEL ── */
-    .left-panel {
-      width: 52%;
-      position: relative;
-      background: var(--color-primary);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-      padding: 40px 48px 0;
-    }
-
-    /* Sky gradient background */
-    .left-panel::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        170deg,
-        #b8d9f0 0%,
-        #d4eaf7 20%,
-        #e8f4fb 35%,
-        #f0e8c8 55%,
-        #e8c88a 70%,
-        #d4a050 85%,
-        #4A7A20 85%,
-        #2D5016 100%
-      );
-      z-index: 0;
-    }
 
     /* Sun */
     .left-panel::after {
@@ -427,23 +397,6 @@
     }
     .login-link a:hover { text-decoration: underline; }
 
-    /* Animations */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(24px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-8px); }
-    }
-    @keyframes drift {
-      0%, 100% { transform: translateX(0); }
-      50%       { transform: translateX(10px); }
-    }
 
     /* Scrollbar */
     .right-panel::-webkit-scrollbar { width: 5px; }
