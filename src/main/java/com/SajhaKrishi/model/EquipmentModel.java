@@ -36,7 +36,6 @@ public class EquipmentModel extends Base {
 			String imagePath, int ownerId) {
 
 		super("A");
-
 		this.name = name;
 		this.categoryIs = categoryIs;
 		this.description = description;
@@ -70,8 +69,7 @@ public class EquipmentModel extends Base {
 			String condition, String specifications, String fuelType,
 			String imagePath, int ownerId) {
 
-		super("A");
-		this.categoryIs = id;
+		super(id, "A");
 		this.name = name;
 		this.categoryIs = categoryIs;
 		this.description = description;
