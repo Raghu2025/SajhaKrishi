@@ -1,2 +1,111 @@
 @charset "UTF-8";
-@import "main.css";
+@import "global.css";
+
+
+body {
+	width: 100dvw;
+	height: 100dvh;
+	background-color: var(--color-bg-section);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+}
+
+.header-label {
+	text-align: center;
+	margin-bottom: 2rem;
+	font-family: var(--font-primary);
+}
+
+.header-label .app-name-logo-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+}
+
+.header-label .app-name-logo-wrapper h6 {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--color-primary);
+}
+
+.header-label .app-logo {
+	width: 40px;
+	height: 40px;
+}
+
+.header-label .welcome-message {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--color-primary);
+	margin-top: 0.5rem;
+}
+
+.header-label p {
+	color: var(--color-earth);
+	font-size: 1rem;
+	margin-top: 0.25rem;
+}
+
+.login-form-wrapper {
+	width: clamp(400px, 30%, 500px);
+	background-color: var(--color-bg-card);
+	padding: 1.5rem;
+	border-radius: 15px;
+	box-shadow: 0 4px 12px rgba(232, 160, 32, 0.1);
+}
+
+.login-form-wrapper .form-header h6 {
+	font-size: 1.125rem;
+	font-weight: 700;
+	color: #000;
+	margin-bottom: 10px;
+	font-family: var(--font-primary);
+}
+
+.login-form-wrapper .form-header p {
+	font-size: 0.875rem;
+	color: #999;
+	opacity: 0.7;
+	margin-bottom: 1.5rem;
+}
+
+.login-form-wrapper .button-wrapper {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+}
+
+.login-form-wrapper .button-wrapper button {
+	width: 100%;
+	background-color: var(--color-primary);
+	color: #fff;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 0.875rem;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.login-form-wrapper .button-wrapper button:hover {
+	background-color: var(--color-primary-hover);
+}
+
+.other-link p {
+	text-align: center;
+	font-size: 0.875rem;
+}
+
+.other-link a {
+	color: var(--color-accent);
+	text-decoration: none;
+	font-weight: 700;
+}
+
+.other-link a:hover {
+	text-decoration: underline;
+}

@@ -3,12 +3,17 @@ package com.SajhaKrishi.controller;
 import jakarta.servlet.ServletException;
 
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 
 import com.SajhaKrishi.constant.*;
+import com.SajhaKrishi.dao.UserDao;
+import com.SajhaKrishi.model.User;
 
 /**
  * Servlet implementation class AuthController
@@ -16,12 +21,16 @@ import com.SajhaKrishi.constant.*;
 @WebServlet({ ApiConstant.LOGIN, ApiConstant.REGISTER, ApiConstant.LOGOUT })
 public class AuthController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private final String[] districtlist = DropdownConstant.DISTRICT;
+	private UserDao userDao;
+	
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
 	public AuthController() {
 		super();
+		userDao = new UserDao();
 	}
 
 	/**
@@ -35,6 +44,7 @@ public class AuthController extends HttpServlet {
 		if (path.equals(ApiConstant.LOGIN)) {
 			request.getRequestDispatcher(PageConstant.LOGIN_PAGE).forward(request, response);
 		} else if (path.equals(ApiConstant.REGISTER)) {
+			request.setAttribute("district", this.districtlist);
 			request.getRequestDispatcher(PageConstant.REGISTER_PAGE).forward(request, response);
 		} else if (path.equals(ApiConstant.LOGOUT)) {
 			handleLogout(request, response);
@@ -47,14 +57,67 @@ public class AuthController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
+		String path = request.getServletPath();
+		System.out.println(path);
+		if (path.equals(ApiConstant.LOGIN)) {
+			System.out.println("ogin");
+			handleLogin(request, response);
+		} else if (path.equals(ApiConstant.REGISTER)) {
+			handleRegister(request, response);
+		} else if (path.equals(ApiConstant.LOGOUT)) {
+			handleLogout(request, response);
+		}
 	}
 
-	protected void handleLogin(HttpServletRequest request, HttpServletResponse response) {
+	protected void handleLogin(HttpServletRequest request, HttpServletResponse response)
+	        throws IOException, ServletException {
 
+	    String email = request.getParameter("email");
+	    String password = request.getParameter("password");
+
+	    User user = userDao.validateUser(email, password);
+
+	    if (user != null) {
+	        // Safe to access user now
+
+	        // Create session
+	        HttpSession session = request.getSession();
+	        session.setAttribute("user", user);
+
+	        // Create cookie
+	        Cookie userCookie = new Cookie("user_id", String.valueOf(user.getId()));
+	        userCookie.setMaxAge(60 * 60 * 24); // 24 hours
+	        response.addCookie(userCookie);
+
+	        // Redirect
+	        response.sendRedirect("home");
+
+	    } else {
+	        request.setAttribute("error", "Invalid username or password.");
+	        request.getRequestDispatcher(PageConstant.LOGIN_PAGE)
+	               .forward(request, response);
+	    }
 	}
 	
-	protected void handleRegister(HttpServletRequest request, HttpServletResponse response) {
+	protected void handleRegister(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		String fullName = request.getParameter("fullName");
+		String phoneNumber = request.getParameter("phoneNumber");
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
+		String address = request.getParameter("address");
+		String district = request.getParameter("district");
+		System.out.println(password);
+		System.out.println("kokoko");
+		int role = 2;
+		User user = new User(fullName,email, password, address, district, role, phoneNumber);
+		user.setPassword(password);
+		boolean success = userDao.registerUser(user);
+		if (success) {
+		    response.sendRedirect("login");
+		} else {
+		    request.setAttribute("error", "Registration failed. Try again.");
+		    request.getRequestDispatcher(PageConstant.REGISTER_PAGE).forward(request, response);
+		}
 
 	}
 	

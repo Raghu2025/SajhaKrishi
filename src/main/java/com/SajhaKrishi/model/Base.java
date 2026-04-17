@@ -8,6 +8,10 @@ public class Base {
 		this.id = id;
 		this.status = status;
 	}
+	public Base(String status) {
+		this.id = id;
+		this.status = status;
+	}
 	public int getId() {
 		return id;
 	}
