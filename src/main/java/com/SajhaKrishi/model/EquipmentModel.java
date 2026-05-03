@@ -2,7 +2,8 @@ package com.SajhaKrishi.model;
 
 public class EquipmentModel extends Base {
 	private String name; 
-	private String categoryIs;           
+	private String categoryId;   
+	private String categoryName;
 	private String description;         
 	private String brand;               
 	private int manufactureYear;        
@@ -25,9 +26,8 @@ public class EquipmentModel extends Base {
 
 	private String imagePath;         
 	private int ownerId;             
-
-
-	public EquipmentModel(String name, String categoryIs, String description, String brand,
+	
+	public EquipmentModel(String name, String categoryId, String description, String brand,
 			int manufactureYear, double pricePerDay, double pricePerHour,
 			double depositAmount, String availabilityStatus,
 			String availableFrom, String availableTo,
@@ -37,7 +37,7 @@ public class EquipmentModel extends Base {
 
 		super("A");
 		this.name = name;
-		this.categoryIs = categoryIs;
+		this.categoryId = categoryId;
 		this.description = description;
 		this.brand = brand;
 		this.manufactureYear = manufactureYear;
@@ -61,39 +61,12 @@ public class EquipmentModel extends Base {
 		this.imagePath = imagePath;
 		this.ownerId = ownerId;
 	}
-	public EquipmentModel(int id, String name, String categoryIs, String description, String brand,
-			int manufactureYear, double pricePerDay, double pricePerHour,
-			double depositAmount, String availabilityStatus,
-			String availableFrom, String availableTo,
-			String district, String municipality, String address,
-			String condition, String specifications, String fuelType,
-			String imagePath, int ownerId) {
-
+	public EquipmentModel(int id) {
 		super(id, "A");
-		this.name = name;
-		this.categoryIs = categoryIs;
-		this.description = description;
-		this.brand = brand;
-		this.manufactureYear = manufactureYear;
-
-		this.pricePerDay = pricePerDay;
-		this.pricePerHour = pricePerHour;
-		this.depositAmount = depositAmount;
-
-		this.availabilityStatus = availabilityStatus;
-		this.availableFrom = availableFrom;
-		this.availableTo = availableTo;
-
-		this.district = district;
-		this.municipality = municipality;
-		this.address = address;
-
-		this.condition = condition;
-		this.specifications = specifications;
-		this.fuelType = fuelType;
-
-		this.imagePath = imagePath;
-		this.ownerId = ownerId;
+	}
+	
+	public EquipmentModel() {
+		super();
 	}
 
 
@@ -103,11 +76,11 @@ public class EquipmentModel extends Base {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getCategoryIs() {
-		return categoryIs;
+	public String getCategoryId() {
+		return categoryId;
 	}
-	public void setCategoryIs(String categoryIs) {
-		this.categoryIs = categoryIs;
+	public void setCategoryId(String categoryId) {
+		this.categoryId = categoryId;
 	}
 	public String getDescription() {
 		return description;
@@ -210,6 +183,12 @@ public class EquipmentModel extends Base {
 	}
 	public void setOwnerId(int ownerId) {
 		this.ownerId = ownerId;
+	}
+	public String getCategoryName() {
+		return categoryName;
+	}
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
 
 }

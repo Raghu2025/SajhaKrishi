@@ -9,9 +9,13 @@ public class Base {
 		this.status = status;
 	}
 	public Base(String status) {
-		this.id = id;
 		this.status = status;
 	}
+	
+	public Base() {
+		this.status = "A";
+	}
+	
 	public int getId() {
 		return id;
 	}

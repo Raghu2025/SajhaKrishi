@@ -8,6 +8,9 @@ public class CategoryModel extends Base {
 		this.name = name;
 	}
 
+	public CategoryModel() {
+		super("A");
+	}
 	public CategoryModel(int id, String name) {
 		super(id, "A");
 		this.name = name;
