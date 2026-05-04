@@ -13,11 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
+import com.SajhaKrishi.constant.ApiConstant;
+import com.SajhaKrishi.constant.PageConstant;
 import com.SajhaKrishi.dao.EquipmentDao;
 import com.SajhaKrishi.model.EquipmentModel;
 import com.SajhaKrishi.model.User;
 
-@WebServlet("/owner/equipment/*")
+@WebServlet(ApiConstant.OWNER_EQUIPMENT + "/*")
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024,       // 1MB — file written to disk after this
     maxFileSize       = 1024 * 1024 * 10,  // 10MB max per file
@@ -33,9 +35,7 @@ public class EquipmentController extends HttpServlet {
         equipmentDao = new EquipmentDao();
     }
 
-    // ════════════════════════════════════════
-    //  GET — Display pages
-    // ════════════════════════════════════════
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -62,9 +62,7 @@ public class EquipmentController extends HttpServlet {
         }
     }
 
-    // ════════════════════════════════════════
-    //  POST — Form submissions
-    // ════════════════════════════════════════
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -82,33 +80,47 @@ public class EquipmentController extends HttpServlet {
         }
     }
 
-    // ════════════════════════════════════════
-    //  LIST — Show all equipment by owner
-    // ════════════════════════════════════════
+    /**
+     * Equipment list
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void handleList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        User user = (User) session.getAttribute("loggedInUser");
-
-        request.setAttribute("equipmentList", equipmentDao.getEquipmentByOwner(user.getId()));
-        request.getRequestDispatcher("/WEB-INF/views/owner/equipment-list.jsp")
-               .forward(request, response);
+//        HttpSession session = request.getSession(false);
+//        User user = (User) session.getAttribute("loggedInUser");
+//        request.setAttribute("equipmentList", equipmentDao.getEquipmentByOwner(user.getId()));
+    	request.setAttribute("selectedNavItem", "equipment");
+		request.setAttribute("contentPage", PageConstant.EQUIPMENT_LIST);
+		request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
     }
 
-    // ════════════════════════════════════════
-    //  ADD PAGE — Show empty add form
-    // ════════════════════════════════════════
+
+    /**
+     * Equipment Add
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void handleAddPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.getRequestDispatcher("/WEB-INF/views/owner/equipment-add.jsp")
-               .forward(request, response);
+    	request.setAttribute("selectedNavItem", "equipment");
+		request.setAttribute("contentPage", PageConstant.EQUIPMENT_ADD);
+		request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
     }
 
-    // ════════════════════════════════════════
-    //  ADD — Process add form
-    // ════════════════════════════════════════
+
+    /**
+     * Equipment Add form handle
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void handleAdd(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -200,9 +212,13 @@ public class EquipmentController extends HttpServlet {
         }
     }
 
-    // ════════════════════════════════════════
-    //  EDIT PAGE — Show form with existing data
-    // ════════════════════════════════════════
+    /**
+     * Equipment Update
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void handleEditPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -224,9 +240,13 @@ public class EquipmentController extends HttpServlet {
         }
     }
 
-    // ════════════════════════════════════════
-    //  EDIT — Process edit form
-    // ════════════════════════════════════════
+    /**
+     * Equipment Edit
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void handleEdit(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -312,9 +332,14 @@ public class EquipmentController extends HttpServlet {
         }
     }
 
-    // ════════════════════════════════════════
-    //  VIEW — Single equipment detail
-    // ════════════════════════════════════════
+
+    /**
+     * Equipment View
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void handleView(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -336,9 +361,14 @@ public class EquipmentController extends HttpServlet {
         }
     }
 
-    // ════════════════════════════════════════
-    //  DELETE — Soft delete
-    // ════════════════════════════════════════
+
+    /**
+     * Equipment Delete
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     private void handleDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -359,9 +389,15 @@ public class EquipmentController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
     }
 
-    // ════════════════════════════════════════
-    //  HELPER — Image Upload
-    // ════════════════════════════════════════
+
+    /**
+     * Equipment upload
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     * @throws ServletException
+     */
     private String handleImageUpload(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 

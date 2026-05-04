@@ -105,17 +105,17 @@ public class EquipmentListController extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			int id = Integer.parseInt(request.getParameter("id"));
-			EquipmentModel equipment = equipmentDao.getEquipmentById(id);
-
-			if (equipment == null) {
-				request.getSession().setAttribute("error", "Equipment not found.");
-				response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
-				return;
-			}
-
-			request.setAttribute("equipment", equipment);
-			request.getRequestDispatcher("/WEB-INF/views/kisan/equipment-view.jsp").forward(request, response);
+//			int id = Integer.parseInt(request.getParameter("id"));
+//			EquipmentModel equipment = equipmentDao.getEquipmentById(id);
+//
+//			if (equipment == null) {
+//				request.getSession().setAttribute("error", "Equipment not found.");
+//				response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
+//				return;
+//			}
+//
+//			request.setAttribute("equipment", equipment);
+			request.getRequestDispatcher(PageConstant.EQUIPMENT_DETAIL).forward(request, response);
 
 		} catch (NumberFormatException e) {
 			response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");

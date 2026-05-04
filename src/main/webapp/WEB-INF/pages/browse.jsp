@@ -51,16 +51,44 @@
 
 				<div class="grid">
 
-					<div class="card">
-						<!-- <div class="img">🚜</div> -->
-						<h4>Tractor</h4>
-						<p class="price">Rs. 1500/day</p>
+					<div class="product-card">
+						<div class="product-image"></div>
+
+						<div class="product-content">
+							<h3 class="product-title">Tractor (John Deere)</h3>
+							<p class="product-desc">Powerful tractor suitable for plowing
+								and heavy-duty farming tasks.</p>
+
+							<div class="product-meta">
+								<span class="price">Rs. 1500/day</span> <span
+									class="status available">Available</span>
+							</div>
+
+							<div class="product-actions">
+								<button class="btn btn-primary">Rent Now</button>
+								<button class="btn btn-outline">Details</button>
+							</div>
+						</div>
 					</div>
 
-					<div class="card">
-						<!-- <div class="img">🛠</div> -->
-						<h4>Tiller</h4>
-						<p class="price">Rs. 500/day</p>
+					<div class="product-card">
+						<div class="product-image"></div>
+
+						<div class="product-content">
+							<h3 class="product-title">Tractor (John Deere)</h3>
+							<p class="product-desc">Powerful tractor suitable for plowing
+								and heavy-duty farming tasks.</p>
+
+							<div class="product-meta">
+								<span class="price">Rs. 1500/day</span> <span
+									class="status available">Available</span>
+							</div>
+
+							<div class="product-actions">
+								<button class="btn btn-primary">Rent Now</button>
+								<button class="btn btn-outline">Details</button>
+							</div>
+						</div>
 					</div>
 
 				</div>

@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+@import "global.css";
+
+.container {
+	width: clamp(400px, 30%, 500px);
+}
+
+.form-card {
+	width: 100%;
+	background-color: var(--color-bg-card);
+	padding: 1.5rem;
+	border-radius: 15px;
+	border: 1px solid #ddd;
+	box-shadow: 0 4px 12px rgba(232, 160, 32, 0.1);
+}
+
+.form-header h6 {
+	font-size: 1.125rem;
+	font-weight: 700;
+	margin-bottom: 6px;
+}
+
+.form-header p {
+	font-size: 0.875rem;
+	color: #777;
+	margin-bottom: 1.5rem;
+}
