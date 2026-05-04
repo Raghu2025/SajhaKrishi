@@ -53,11 +53,12 @@ body {
 	width: 100dvw;
 	height: 100dvh;
 	background-color: var(--color-bg-section);
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
 	overflow: hidden;
+}
+
+.container {
+	width: clamp(320px, 90%, 1200px);
+	margin: auto;
 }
 
 .form-group {

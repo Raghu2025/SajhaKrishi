@@ -1,18 +1,25 @@
 @charset "UTF-8";
 @import "main.css";
 @import "global.css";
+
 body {
 	width: 100%;
-	min-height: 100dvh;
-	display: flex;
-	align-items:center;
-	justify-content: start;
-	padding: 20px;
-	overflow-y: auto;
-	padding-bottom: 40px;
+	min-height: 100dvh !important;
+	overflow-y: auto  !important;
+	position: relative  !important;
 }
 
-.container {
+.register-container {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	padding-bottom: 40px;
+	margin-top: 20px;
+}
+
+register-container .container_ {
 	width: clamp(400px, 30%, 500px);
 }
 

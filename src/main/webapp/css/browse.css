@@ -1,0 +1,153 @@
+@charset "UTF-8";
+
+@import "global.css";
+
+.browse-page {
+	width: 100%;
+	padding: 2rem;
+}
+
+/* HEADER */
+.page-header h2 {
+	font-size: 1.8rem;
+	font-weight: 700;
+	color: var(--color-primary);
+}
+
+.page-header p {
+	font-size: 0.9rem;
+	color: var(--color-earth);
+	margin-bottom: 1rem;
+}
+
+/* SEARCH BAR (NOT FORM STYLE) */
+.search-bar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	background: var(--color-bg-card);
+	border: 1px solid #ddd;
+	padding: 10px 12px;
+	border-radius: 10px;
+	margin-bottom: 1.5rem;
+}
+
+.search-bar i {
+	color: var(--color-earth);
+}
+
+.search-bar input {
+	border: none;
+	outline: none;
+	width: 100%;
+	font-size: 0.9rem;
+	background: transparent;
+}
+
+/* LAYOUT */
+.layout {
+	display: grid;
+	grid-template-columns: 220px 1fr;
+	gap: 2rem;
+}
+
+/* SIDEBAR */
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+/* FILTER */
+.filter-group {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.filter-title {
+	font-weight: 600;
+	font-size: 0.85rem;
+	color: var(--color-primary);
+}
+
+/* RADIO */
+.radio {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.85rem;
+}
+
+/* CATEGORY */
+.cat {
+	border: none;
+	background: transparent;
+	text-align: left;
+	padding: 6px 8px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 0.85rem;
+}
+
+.cat:hover {
+	background: var(--color-primary-subtle);
+}
+
+.cat.active {
+	background: var(--color-primary);
+	color: white;
+}
+
+/* CONTENT */
+.result {
+	font-size: 0.85rem;
+	color: var(--color-earth);
+	margin-bottom: 10px;
+}
+
+/* GRID */
+.grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
+}
+
+/* CARD */
+.card {
+	background: var(--color-bg-card);
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+.img {
+	height: 100px;
+	background: var(--color-primary-subtle);
+	border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2rem;
+	margin-bottom: 10px;
+}
+
+.card h4 {
+	font-size: 1rem;
+}
+
+.price {
+	color: var(--color-primary);
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+
+/* RESPONSIVE */
+@media ( max-width :768px) {
+	.layout {
+		grid-template-columns: 1fr;
+	}
+	.grid {
+		grid-template-columns: 1fr;
+	}
+}

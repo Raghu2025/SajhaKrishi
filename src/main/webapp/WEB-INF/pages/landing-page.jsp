@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,25 +14,7 @@
     
 </head>
 <body>
-    <header>
-        <div class="container nav">
-        <%--
-                    <div class="logo-wrapper">
-                <div class="logo-box">🌾</div>
-                <div class="logo-text">Sajha Krishi</div>
-            </div>
-         --%>
-
-            <div class="nav-links">
-                <a href="#features">Features</a>
-                <a href="#how">How It Works</a>
-                <a href="#">Browse</a>
-                <button class="btn btn-outline" onclick="location.href='login'">Login</button>
-                <button class="btn btn-primary" onclick="location.href='register'">Sign Up</button>
-            </div>
-        </div>
-    </header>
-
+ 	<jsp:include page="public-navbar.jsp" />
     <section class="container hero">
         <div>
             <h1>Professional Agricultural Tools, <span>Affordable Rentals</span></h1>
@@ -56,27 +38,27 @@
 
         <div class="grid-3">
             <div class="card">
-                <h3>📋 Wide Selection</h3>
+                <h3>Wide Selection</h3>
                 <p>Many tools available</p>
             </div>
             <div class="card">
-                <h3>📅 Flexible Rental</h3>
+                <h3>Flexible Rental</h3>
                 <p>Short or long term</p>
             </div>
             <div class="card">
-                <h3>✓ Quality</h3>
+                <h3>Quality</h3>
                 <p>Maintained equipment</p>
             </div>
             <div class="card">
-                <h3>💰 Affordable</h3>
+                <h3>Affordable</h3>
                 <p>Save money</p>
             </div>
             <div class="card">
-                <h3>📱 Easy Booking</h3>
+                <h3> Easy Booking</h3>
                 <p>Quick system</p>
             </div>
             <div class="card">
-                <h3>👥 Support</h3>
+                <h3>Support</h3>
                 <p>Expert help</p>
             </div>
         </div>

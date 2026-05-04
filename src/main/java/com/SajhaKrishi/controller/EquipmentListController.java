@@ -9,151 +9,157 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import com.SajhaKrishi.constant.ApiConstant;
+import com.SajhaKrishi.constant.PageConstant;
 import com.SajhaKrishi.dao.EquipmentDao;
 import com.SajhaKrishi.model.EquipmentModel;
 
-@WebServlet("/kisan/equipment/*")
+@WebServlet(ApiConstant.KISSAN_EQUIPMENT + "/*")
 public class EquipmentListController extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-    private EquipmentDao equipmentDao;
+	private static final long serialVersionUID = 1L;
+	private EquipmentDao equipmentDao;
 
-    @Override
-    public void init() {
-        equipmentDao = new EquipmentDao();
-    }
+	@Override
+	public void init() {
+		equipmentDao = new EquipmentDao();
+	}
 
-    // ════════════════════════════════════════
-    //  GET — Display pages
-    // ════════════════════════════════════════
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-        String pathInfo = request.getPathInfo();
+		String pathInfo = request.getPathInfo();
+		System.out.print("[][][][]]");
 
-        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/list")) {
-            handleList(request, response);
+		if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/list")) {
+			handleBrowse(request, response);
 
-        } else if (pathInfo.equals("/view")) {
-            handleView(request, response);
+		} else if (pathInfo.equals("/view")) {
+			handleView(request, response);
 
-        } else if (pathInfo.equals("/search")) {
-            handleSearch(request, response);
+		} else if (pathInfo.equals("/search")) {
+//			handleSearch(request, response);
 
-        } else if (pathInfo.equals("/filter")) {
-            handleFilter(request, response);
+		} else if (pathInfo.equals("/filter")) {
+			handleFilter(request, response);
 
-        } else {
-            response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
-        }
-    }
+		} else {
+			response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
+		}
+	}
 
-    // ════════════════════════════════════════
-    //  LIST — Browse all available equipment
-    // ════════════════════════════════════════
-    private void handleList(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	private void handleBrowse(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-        List<EquipmentModel> equipmentList = equipmentDao.getAllEquipment();
+		// 1. Capture all possible parameters
+		String keyword = request.getParameter("keyword");
+		String category = request.getParameter("category");
+		String district = request.getParameter("district");
 
-        request.setAttribute("equipmentList", equipmentList);
-        request.setAttribute("totalCount", equipmentList.size());
+		List<EquipmentModel> equipmentList;
 
-        request.getRequestDispatcher("/WEB-INF/views/kisan/equipment-list.jsp")
-               .forward(request, response);
-    }
+		// 2. Determine Data Retrieval Logic
+		if (isNotEmpty(keyword)) {
+			// Priority 1: Keyword Search
+			equipmentList = equipmentDao.searchEquipment(keyword.trim());
+			request.setAttribute("keyword", keyword);
 
-    // ════════════════════════════════════════
-    //  VIEW — Single equipment detail page
-    // ════════════════════════════════════════
-    private void handleView(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+		} else if (isNotEmpty(category) && isNotEmpty(district)) {
+			// Priority 2: Multi-parameter Filter
+			equipmentList = equipmentDao.getEquipmentByCategory(category);
+			equipmentList.removeIf(e -> !e.getDistrict().equalsIgnoreCase(district));
 
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            EquipmentModel equipment = equipmentDao.getEquipmentById(id);
+		} else if (isNotEmpty(category)) {
+			// Priority 3: Category Filter
+			equipmentList = equipmentDao.getEquipmentByCategory(category);
 
-            if (equipment == null) {
-                request.getSession().setAttribute("error", "Equipment not found.");
-                response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
-                return;
-            }
+		} else if (isNotEmpty(district)) {
+			// Priority 4: District Filter
+			equipmentList = equipmentDao.getEquipmentByDistrict(district);
 
-            request.setAttribute("equipment", equipment);
-            request.getRequestDispatcher("/WEB-INF/views/kisan/equipment-view.jsp")
-                   .forward(request, response);
+		} else {
+			// Default: Show All
+			equipmentList = equipmentDao.getAllEquipment();
+		}
 
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
-        }
-    }
+		// 3. Set standard attributes for the View (JSP)
+		request.setAttribute("equipmentList", equipmentList);
+		request.setAttribute("totalCount", equipmentList.size());
+		request.setAttribute("selectedCategory", category);
+		request.setAttribute("selectedDistrict", district);
 
-    // ════════════════════════════════════════
-    //  SEARCH — Search by keyword
-    // ════════════════════════════════════════
-    private void handleSearch(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+		// 4. Forward to the shared JSP view[cite: 1, 2]
+		request.getRequestDispatcher(PageConstant.BROWSE).forward(request, response);
+	}
 
-        String keyword = request.getParameter("keyword");
+	/**
+	 * View Page
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void handleView(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-        if (keyword == null || keyword.trim().isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
-            return;
-        }
+		try {
+			int id = Integer.parseInt(request.getParameter("id"));
+			EquipmentModel equipment = equipmentDao.getEquipmentById(id);
 
-        List<EquipmentModel> equipmentList = equipmentDao.searchEquipment(keyword.trim());
+			if (equipment == null) {
+				request.getSession().setAttribute("error", "Equipment not found.");
+				response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
+				return;
+			}
 
-        request.setAttribute("equipmentList", equipmentList);
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("totalCount", equipmentList.size());
+			request.setAttribute("equipment", equipment);
+			request.getRequestDispatcher("/WEB-INF/views/kisan/equipment-view.jsp").forward(request, response);
 
-        request.getRequestDispatcher("/WEB-INF/views/kisan/equipment-list.jsp")
-               .forward(request, response);
-    }
+		} catch (NumberFormatException e) {
+			response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
+		}
+	}
 
-    // ════════════════════════════════════════
-    //  FILTER — Filter by category or district
-    // ════════════════════════════════════════
-    private void handleFilter(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	private void handleFilter(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-        String category = request.getParameter("category");
-        String district = request.getParameter("district");
+		String category = request.getParameter("category");
+		String district = request.getParameter("district");
 
-        List<EquipmentModel> equipmentList;
+		List<EquipmentModel> equipmentList;
 
-        // Both filters applied
-        if (isNotEmpty(category) && isNotEmpty(district)) {
-            equipmentList = equipmentDao.searchEquipment(category);
-            equipmentList.removeIf(e -> !e.getDistrict().equalsIgnoreCase(district));
+		// Both filters applied
+		if (isNotEmpty(category) && isNotEmpty(district)) {
+			equipmentList = equipmentDao.searchEquipment(category);
+			equipmentList.removeIf(e -> !e.getDistrict().equalsIgnoreCase(district));
 
-        // Category only
-        } else if (isNotEmpty(category)) {
-            equipmentList = equipmentDao.getEquipmentByCategory(category);
+			// Category only
+		} else if (isNotEmpty(category)) {
+			equipmentList = equipmentDao.getEquipmentByCategory(category);
 
-        // District only
-        } else if (isNotEmpty(district)) {
-            equipmentList = equipmentDao.getEquipmentByDistrict(district);
+			// District only
+		} else if (isNotEmpty(district)) {
+			equipmentList = equipmentDao.getEquipmentByDistrict(district);
 
-        // No filter — show all
-        } else {
-            equipmentList = equipmentDao.getAllEquipment();
-        }
+			// No filter — show all
+		} else {
+			equipmentList = equipmentDao.getAllEquipment();
+		}
 
-        request.setAttribute("equipmentList", equipmentList);
-        request.setAttribute("selectedCategory", category);
-        request.setAttribute("selectedDistrict", district);
-        request.setAttribute("totalCount", equipmentList.size());
+		request.setAttribute("equipmentList", equipmentList);
+		request.setAttribute("selectedCategory", category);
+		request.setAttribute("selectedDistrict", district);
+		request.setAttribute("totalCount", equipmentList.size());
 
-        request.getRequestDispatcher("/WEB-INF/views/kisan/equipment-list.jsp")
-               .forward(request, response);
-    }
+		request.getRequestDispatcher("/WEB-INF/views/kisan/equipment-list.jsp").forward(request, response);
+	}
 
-    // ════════════════════════════════════════
-    //  HELPER
-    // ════════════════════════════════════════
-    private boolean isNotEmpty(String value) {
-        return value != null && !value.trim().isEmpty();
-    }
+	/**
+	 * Helper method for cleaner logic
+	 */
+	private boolean isNotEmpty(String value) {
+		return value != null && !value.trim().isEmpty();
+	}
 }

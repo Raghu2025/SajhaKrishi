@@ -12,43 +12,45 @@
 	href="${pageContext.request.contextPath}/css/login.css">
 </head>
 <body>
-	<div class="header-label">
-
-		<h6 class="welcome-message">Welcome to Sajha Krishi</h6>
-		<p>Sign in to your account to continue</p>
-	</div>
-	<div class="login-form-wrapper">
-		<div class="form-header">
-			<h6>Login</h6>
-			<p>Enter your email and password to access your account</p>
-			<c:if test="${not empty error}">
-				<div class="error show">${error}</div>
-			</c:if>
-		</div>	
-		<form action="login" method="post">
-			<div class="form-group">
-				<label for="email">Email Address</label> <input type="email"
-					placeholder="Email" name="email" required /> <span class="input-error">Error
-					Message</span>
-			</div>
-
-			<div class="form-group">
-				<label for="password">Password</label> <input type="password"
-					placeholder="*******" name="password" required /> <span class="input-error">Error
-					Message</span>
-			</div>
-
-			<div class="button-wrapper">
-				<button type="submit">Sign In</button>
-			</div>
-		</form>
-		<div class="other-link">
-			<p>
-				Don't have an account? <a href="/register.html">Sign up here</a>
-			</p>
+	<jsp:include page="public-navbar.jsp" />
+	<div class="login-container">
+		<div class="header-label">
+			<h6 class="welcome-message">Welcome to Sajha Krishi</h6>
+			<p>Sign in to your account to continue</p>
 		</div>
-	</div>
+		<div class="login-form-wrapper">
+			<div class="form-header">
+				<h6>Login</h6>
+				<p>Enter your email and password to access your account</p>
+				<c:if test="${not empty error}">
+					<div class="error show">${error}</div>
+				</c:if>
+			</div>
+			<form action="login" method="post">
+				<div class="form-group">
+					<label for="email">Email Address</label> <input type="email"
+						placeholder="Email" name="email" required /> <span
+						class="input-error">Error Message</span>
+				</div>
 
+				<div class="form-group">
+					<label for="password">Password</label> <input type="password"
+						placeholder="*******" name="password" required /> <span
+						class="input-error">Error Message</span>
+				</div>
+
+				<div class="button-wrapper">
+					<button type="submit">Sign In</button>
+				</div>
+			</form>
+			<div class="other-link">
+				<p>
+					Don't have an account? <a href="/register.html">Sign up here</a>
+				</p>
+			</div>
+		</div>
+
+	</div>
 </body>	
 </html>
 
