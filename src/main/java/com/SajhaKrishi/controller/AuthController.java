@@ -23,7 +23,6 @@ public class AuthController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final String[] districtlist = DropdownConstant.DISTRICT;
 	private UserDao userDao;
-	
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -44,11 +43,16 @@ public class AuthController extends HttpServlet {
 		if (path.equals(ApiConstant.LOGIN)) {
 			request.getRequestDispatcher(PageConstant.LOGIN_PAGE).forward(request, response);
 		} else if (path.equals(ApiConstant.REGISTER)) {
-			request.setAttribute("district", this.districtlist);
-			request.getRequestDispatcher(PageConstant.REGISTER_PAGE).forward(request, response);
+			this.handleRegisterPage(request, response);
 		} else if (path.equals(ApiConstant.LOGOUT)) {
 			handleLogout(request, response);
 		}
+	}
+
+	private void handleRegisterPage(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setAttribute("district", this.districtlist);
+		request.getRequestDispatcher(PageConstant.REGISTER_PAGE).forward(request, response);
 	}
 
 	/**
@@ -70,57 +74,55 @@ public class AuthController extends HttpServlet {
 	}
 
 	protected void handleLogin(HttpServletRequest request, HttpServletResponse response)
-	        throws IOException, ServletException {
+			throws IOException, ServletException {
 
-	    String email = request.getParameter("email");
-	    String password = request.getParameter("password");
+		String email = request.getParameter("email");
+		String password = request.getParameter("password");
 
-	    User user = userDao.validateUser(email, password);
+		User user = userDao.validateUser(email, password);
 
-	    if (user != null) {
-	        // Safe to access user now
+		if (user != null) {
+			// Safe to access user now
 
-	        // Create session
-	        HttpSession session = request.getSession();
-	        session.setAttribute("user", user);
+			// Create session
+			HttpSession session = request.getSession();
+			session.setAttribute("user", user);
 
-	        // Create cookie
-	        Cookie userCookie = new Cookie("user_id", String.valueOf(user.getId()));
-	        userCookie.setMaxAge(60 * 60 * 24); // 24 hours
-	        response.addCookie(userCookie);
+			// Create cookie
+			Cookie userCookie = new Cookie("user_id", String.valueOf(user.getId()));
+			userCookie.setMaxAge(60 * 60 * 24); // 24 hours
+			response.addCookie(userCookie);
 
-	        // Redirect
-	        response.sendRedirect("home");
+			// Redirect
+			response.sendRedirect(request.getContextPath() + ApiConstant.DASHBOARD);
 
-	    } else {
-	        request.setAttribute("error", "Invalid username or password.");
-	        request.getRequestDispatcher(PageConstant.LOGIN_PAGE)
-	               .forward(request, response);
-	    }
+		} else {
+			request.setAttribute("error", "Invalid username or password.");
+			request.getRequestDispatcher(PageConstant.LOGIN_PAGE).forward(request, response);
+		}
 	}
-	
-	protected void handleRegister(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+	protected void handleRegister(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 		String fullName = request.getParameter("fullName");
 		String phoneNumber = request.getParameter("phoneNumber");
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 		String address = request.getParameter("address");
 		String district = request.getParameter("district");
-		System.out.println(password);
-		System.out.println("kokoko");
 		int role = 2;
-		User user = new User(fullName,email, password, address, district, role, phoneNumber);
+		User user = new User(fullName, email, password, address, district, role, phoneNumber);
 		user.setPassword(password);
 		boolean success = userDao.registerUser(user);
 		if (success) {
-		    response.sendRedirect("login");
+			response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
 		} else {
-		    request.setAttribute("error", "Registration failed. Try again.");
-		    request.getRequestDispatcher(PageConstant.REGISTER_PAGE).forward(request, response);
+			request.setAttribute("error", "Registration failed. Try again.");
+			this.handleRegisterPage(request, response);
 		}
 
 	}
-	
+
 	protected void handleLogout(HttpServletRequest request, HttpServletResponse response) {
 
 	}

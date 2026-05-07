@@ -9,7 +9,8 @@ public class User extends Base {
 	private String password;
 	private String address;
 	private String district;
-	private int role;
+	private int roleId;
+	private String roleName;
 
 	public User(int id, String fullName,String email, String password, String address, String district, int role, String phoneNumber) {
 		super(id, "A");
@@ -19,7 +20,7 @@ public class User extends Base {
 		this.password = password;
 		this.address = address;
 		this.district = district;
-		this.role = role;
+		this.roleId = role;
 	}
 
 	public User(String fullName,String email, String password, String address, String district, int role, String phoneNumber) {
@@ -29,7 +30,7 @@ public class User extends Base {
 		this.phoneNumber = phoneNumber;
 		this.address = address;
 		this.district = district;
-		this.role = role;
+		this.roleId = role;
 	}
 
 
@@ -77,12 +78,12 @@ public class User extends Base {
 		this.district = district;
 	}
 
-	public int getRole() {
-		return role;
+	public int getRoleId() {
+		return roleId;
 	}
 
-	public void setRole(int role) {
-		this.role = role;
+	public void setRoleId(int role) {
+		this.roleId = role;
 	}
 
 	public String getEmail() {
@@ -91,6 +92,14 @@ public class User extends Base {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
 	}
 
 

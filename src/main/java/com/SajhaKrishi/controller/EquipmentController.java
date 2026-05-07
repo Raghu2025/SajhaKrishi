@@ -3,6 +3,7 @@ package com.SajhaKrishi.controller;
 import java.io.IOException;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.List;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -14,10 +15,14 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
 import com.SajhaKrishi.constant.ApiConstant;
+import com.SajhaKrishi.constant.DropdownConstant;
 import com.SajhaKrishi.constant.PageConstant;
+import com.SajhaKrishi.dao.CategoryDao;
 import com.SajhaKrishi.dao.EquipmentDao;
+import com.SajhaKrishi.model.CategoryModel;
 import com.SajhaKrishi.model.EquipmentModel;
 import com.SajhaKrishi.model.User;
+import com.SajhaKrishi.utils.ValidationUtil;
 
 @WebServlet(ApiConstant.OWNER_EQUIPMENT + "/*")
 @MultipartConfig(
@@ -29,10 +34,12 @@ public class EquipmentController extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private EquipmentDao equipmentDao;
+    private CategoryDao categoryDao;
 
     @Override
     public void init() {
         equipmentDao = new EquipmentDao();
+        categoryDao = new CategoryDao();
     }
 
 
@@ -40,7 +47,7 @@ public class EquipmentController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String pathInfo = request.getPathInfo(); // e.g. /list, /add, /edit, /delete
+        String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/list")) {
             handleList(request, response);
@@ -107,7 +114,9 @@ public class EquipmentController extends HttpServlet {
      */
     private void handleAddPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+    	List<CategoryModel> categoryList = categoryDao.getAllCategories();
+    	request.setAttribute("district", DropdownConstant.DISTRICT);
+    	request.setAttribute("categoryList", categoryList);
     	request.setAttribute("selectedNavItem", "equipment");
 		request.setAttribute("contentPage", PageConstant.EQUIPMENT_ADD);
 		request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
@@ -125,18 +134,19 @@ public class EquipmentController extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        User owner = (User) session.getAttribute("loggedInUser");
+        User owner = (User) session.getAttribute("user");
+        System.out.print(owner.toString());
 
         try {
             // — Get form fields —
-            String equipmentName      = request.getParameter("equipmentName");
+            String equipmentName      = request.getParameter("name");
             String category           = request.getParameter("category");
             String description        = request.getParameter("description");
             String brand              = request.getParameter("brand");
-            int    manufactureYear    = Integer.parseInt(request.getParameter("manufactureYear"));
-            double pricePerDay        = Double.parseDouble(request.getParameter("pricePerDay"));
-            double pricePerHour       = Double.parseDouble(request.getParameter("pricePerHour"));
-            double depositAmount      = Double.parseDouble(request.getParameter("depositAmount"));
+            int    manufactureYear    = ValidationUtil.parseInt(request.getParameter("manufactureYear"));
+            double pricePerDay        = ValidationUtil.parseDouble(request.getParameter("pricePerDay"));
+            double pricePerHour       = ValidationUtil.parseDouble(request.getParameter("pricePerHour"));
+            double depositAmount      = ValidationUtil.parseDouble(request.getParameter("depositAmount"));
             String availabilityStatus = request.getParameter("availabilityStatus");
             String availableFrom      = request.getParameter("availableFrom");
             String availableTo        = request.getParameter("availableTo");
@@ -147,18 +157,17 @@ public class EquipmentController extends HttpServlet {
             String specifications     = request.getParameter("specifications");
             String fuelType           = request.getParameter("fuelType");
 
+            System.out.print("raghu: " + equipmentName);
             // — Validation —
             if (equipmentName == null || equipmentName.trim().isEmpty()) {
                 request.setAttribute("error", "Equipment name is required.");
-                request.getRequestDispatcher("/WEB-INF/views/owner/equipment-add.jsp")
-                       .forward(request, response);
+                this.handleAddPage(request, response);
                 return;
             }
 
             if (pricePerDay <= 0) {
                 request.setAttribute("error", "Price per day must be greater than 0.");
-                request.getRequestDispatcher("/WEB-INF/views/owner/equipment-add.jsp")
-                       .forward(request, response);
+                this.handleAddPage(request, response);
                 return;
             }
 
@@ -193,22 +202,20 @@ public class EquipmentController extends HttpServlet {
 
             if (success) {
                 request.getSession().setAttribute("success", "Equipment added successfully!");
-                response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
+                response.sendRedirect(request.getContextPath() + ApiConstant.OWNER_EQUIPMENT);
             } else {
                 request.setAttribute("error", "Failed to add equipment. Please try again.");
-                request.getRequestDispatcher("/WEB-INF/views/owner/equipment-add.jsp")
-                       .forward(request, response);
+                this.handleAddPage(request, response);
             }
 
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Invalid number format. Please check your inputs.");
-            request.getRequestDispatcher("/WEB-INF/views/owner/equipment-add.jsp")
-                   .forward(request, response);
+            this.handleAddPage(request, response);
         } catch (Exception e) {
-            System.err.println("Error adding equipment: " + e.getMessage());
-            request.setAttribute("error", "Something went wrong. Please try again.");
-            request.getRequestDispatcher("/WEB-INF/views/owner/equipment-add.jsp")
-                   .forward(request, response);
+        	e.printStackTrace();
+			System.err.println("Error adding equipment: " + e.getMessage());
+			request.setAttribute("error", "Something went wrong. Please try again.");
+			this.handleAddPage(request, response);
         }
     }
 
@@ -402,6 +409,7 @@ public class EquipmentController extends HttpServlet {
             throws IOException, ServletException {
 
         Part filePart = request.getPart("image");
+        
 
         if (filePart == null || filePart.getSize() == 0) {
             return null; // no image uploaded

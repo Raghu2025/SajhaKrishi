@@ -26,7 +26,7 @@ public class CategoryDao {
     //  CREATE
     // ════════════════════════════
     public boolean addCategory(CategoryModel category) {
-        String query = "INSERT INTO categories (category_name, description, icon, status) " +
+        String query = "INSERT INTO category (name, description, icon, status) " +
                        "VALUES (?, ?, ?, ?)";
 
         if (conn == null) {
@@ -59,7 +59,7 @@ public class CategoryDao {
     //  READ — Single by ID
     // ════════════════════════════
     public CategoryModel getCategoryById(int id) {
-        String query = "SELECT * FROM categories WHERE id = ?";
+        String query = "SELECT * FROM category WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -81,7 +81,7 @@ public class CategoryDao {
     //  READ — Single by Name
     // ════════════════════════════
     public CategoryModel getCategoryByName(String name) {
-        String query = "SELECT * FROM categories WHERE category_name = ? AND status = 'A'";
+        String query = "SELECT * FROM category WHERE name = ? AND status = 'A'";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -104,7 +104,7 @@ public class CategoryDao {
     // ════════════════════════════
     public List<CategoryModel> getAllCategories() {
         List<CategoryModel> categoryList = new ArrayList<>();
-        String query = "SELECT * FROM categories WHERE status = 'A' ORDER BY category_name ASC";
+        String query = "SELECT * FROM category WHERE status = 'A' ORDER BY name ASC";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
@@ -114,7 +114,7 @@ public class CategoryDao {
                 categoryList.add(mapResultSetToCategory(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Error fetching all categories: " + e.getMessage());
+            System.err.println("Error fetching all category: " + e.getMessage());
         }
         return categoryList;
     }
@@ -125,7 +125,7 @@ public class CategoryDao {
     // ════════════════════════════
     public List<CategoryModel> getAllCategoriesAdmin() {
         List<CategoryModel> categoryList = new ArrayList<>();
-        String query = "SELECT * FROM categories ORDER BY category_name ASC";
+        String query = "SELECT * FROM category ORDER BY name ASC";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query);
@@ -135,17 +135,17 @@ public class CategoryDao {
                 categoryList.add(mapResultSetToCategory(rs));
             }
         } catch (SQLException e) {
-            System.err.println("Error fetching all categories for admin: " + e.getMessage());
+            System.err.println("Error fetching all category for admin: " + e.getMessage());
         }
         return categoryList;
     }
 
     // ════════════════════════════
     //  CHECK — Name exists
-    //  Prevent duplicate categories
+    //  Prevent duplicate category
     // ════════════════════════════
     public boolean isCategoryNameExists(String name) {
-        String query = "SELECT COUNT(*) FROM categories WHERE category_name = ?";
+        String query = "SELECT COUNT(*) FROM category WHERE name = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -167,7 +167,7 @@ public class CategoryDao {
     //  UPDATE
     // ════════════════════════════
     public boolean updateCategory(CategoryModel category) {
-        String query = "UPDATE categories SET category_name=?, description=?, icon=? WHERE id=?";
+        String query = "UPDATE category SET name=?, description=?, icon=? WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -188,7 +188,7 @@ public class CategoryDao {
     //  DELETE — Soft Delete
     // ════════════════════════════
     public boolean deleteCategory(int id) {
-        String query = "UPDATE categories SET status = 'I' WHERE id = ?";
+        String query = "UPDATE category SET status = 'I' WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -208,7 +208,7 @@ public class CategoryDao {
     private CategoryModel mapResultSetToCategory(ResultSet rs) throws SQLException {
         CategoryModel category = new CategoryModel();
         category.setId(rs.getInt("id"));
-        category.setName(rs.getString("category_name"));
+        category.setName(rs.getString("name"));
         category.setStatus(rs.getString("status"));
         return category;
     }

@@ -26,10 +26,10 @@ public class EquipmentDao {
     //  CREATE
     // ════════════════════════════
     public boolean addEquipment(EquipmentModel equipment) {
-        String query = "INSERT INTO equipment (equipment_name, category, description, brand, manufacture_year, " +
+        String query = "INSERT INTO equipment (name, category_id, description, brand, manufacture_year, " +
                        "price_per_day, price_per_hour, deposit_amount, availability_status, " +
                        "available_from, available_to, district, municipality, address, " +
-                       "condition_status, specifications, fuel_type, image_path, owner_id, status) " +
+                       "condition_, specifications, fuel_type, image_path, owner_id, status) " +
                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         if (conn == null) {

@@ -37,7 +37,7 @@ public class UserDao {
 			pstmt.setString(4, user.getPassword());
 			pstmt.setString(5, user.getAddress());
 			pstmt.setString(6, user.getDistrict());
-			pstmt.setLong(7, user.getRole());
+			pstmt.setLong(7, user.getRoleId());
 			pstmt.setString(8, user.getStatus());
 
 			int rowsInserted = pstmt.executeUpdate();
