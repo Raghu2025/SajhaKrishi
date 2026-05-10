@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -81,6 +81,27 @@
 									</div>
 								</td>
 							</tr>
+
+							<c:forEach var="name" items="${district}">
+								<td>
+									<!-- <div class="img-box">🚜</div> -->
+								</td>
+
+								<td class="name">Mini Tiller</td>
+								<td class="category">Small Tools</td>
+
+								<td><input type="number" value="8" min="0"
+									class="stock-input"></td>
+
+								<td class="price">Rs. 500/day</td>
+
+								<td>
+									<div class="actions">
+										<button class="btn btn-outline">Edit</button>
+										<button class="btn btn-danger">Remove</button>
+									</div>
+								</td>
+							</c:forEach>
 
 						</tbody>
 					</table>

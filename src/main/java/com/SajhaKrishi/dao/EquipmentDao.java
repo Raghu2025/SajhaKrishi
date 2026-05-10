@@ -302,9 +302,9 @@ public class EquipmentDao {
     // ════════════════════════════
     private EquipmentModel mapResultSetToEquipment(ResultSet rs) throws SQLException {
         EquipmentModel equipment = new EquipmentModel(rs.getInt("id"));
-        equipment.setName(rs.getString("equipment_name"));
+        equipment.setName(rs.getString("name"));
         equipment.setCategoryId(rs.getString("category_id"));
-        equipment.setCategoryName(rs.getString("category_name"));
+//        equipment.setCategoryName(rs.getString("category_name"));
         equipment.setDescription(rs.getString("description"));
         equipment.setBrand(rs.getString("brand"));
         equipment.setManufactureYear(rs.getInt("manufacture_year"));
@@ -317,7 +317,7 @@ public class EquipmentDao {
         equipment.setDistrict(rs.getString("district"));
         equipment.setMunicipality(rs.getString("municipality"));
         equipment.setAddress(rs.getString("address"));
-        equipment.setCondition(rs.getString("condition_status"));
+        equipment.setCondition(rs.getString("condition_"));
         equipment.setSpecifications(rs.getString("specifications"));
         equipment.setFuelType(rs.getString("fuel_type"));
         equipment.setImagePath(rs.getString("image_path"));

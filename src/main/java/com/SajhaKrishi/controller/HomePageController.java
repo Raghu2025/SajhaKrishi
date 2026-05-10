@@ -13,7 +13,7 @@ import com.SajhaKrishi.constant.PageConstant;
 /**
  * Servlet implementation class HomePageController
  */
-@WebServlet({ApiConstant.HOME, "/"})
+@WebServlet({ApiConstant.HOME})
 public class HomePageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

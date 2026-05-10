@@ -9,6 +9,7 @@ public class ApiConstant {
 	public static final String DASHBOARD = "/dashboard";
 	public static final String ADD = "/add";
 	public static final String EDIT = "/edit";
+	public static final String DELETE = "/delete";
 	public static final String LIST = "/list";
 	public static final String UNAUTHORIZED = "/unauthorized";
 	
@@ -22,6 +23,8 @@ public class ApiConstant {
     public static final String CSS = "/css/";
     public static final String JS = "/js/";
     public static final String IMAGES = "/images/";
+    public static final String SAVED_IMAGE_PATH = "D:/eclipse-workspace/SajhaKrishi/src/main/webapp";
+    public static final String EQUIPMENT_SAVED_IMAGE_PATH = "/uploads/equipment";
 
 	public static String getLogin() {
 		return LOGIN;

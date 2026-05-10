@@ -49,23 +49,23 @@ public class EquipmentController extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
 
-        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/list")) {
+        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals(ApiConstant.LIST)) {
             handleList(request, response);
 
-        } else if (pathInfo.equals("/add")) {
+        } else if (pathInfo.equals(ApiConstant.ADD)) {
             handleAddPage(request, response);
 
-        } else if (pathInfo.equals("/edit")) {
+        } else if (pathInfo.equals(ApiConstant.EDIT)) {
             handleEditPage(request, response);
 
-        } else if (pathInfo.equals("/delete")) {
+        } else if (pathInfo.equals(ApiConstant.DELETE)) {
             handleDelete(request, response);
 
         } else if (pathInfo.equals("/view")) {
             handleView(request, response);
 
         } else {
-            response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
+            response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.LIST);
         }
     }
 
@@ -96,9 +96,10 @@ public class EquipmentController extends HttpServlet {
      */
     private void handleList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        HttpSession session = request.getSession(false);
-//        User user = (User) session.getAttribute("loggedInUser");
-//        request.setAttribute("equipmentList", equipmentDao.getEquipmentByOwner(user.getId()));
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
+        request.setAttribute("equipmentList", equipmentDao.getEquipmentByOwner(user.getId()));
+        System.out.print(equipmentDao.getEquipmentByOwner(user.getId()));
     	request.setAttribute("selectedNavItem", "equipment");
 		request.setAttribute("contentPage", PageConstant.EQUIPMENT_LIST);
 		request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
@@ -409,23 +410,22 @@ public class EquipmentController extends HttpServlet {
             throws IOException, ServletException {
 
         Part filePart = request.getPart("image");
-        
+        String staticImagePath = ApiConstant.SAVED_IMAGE_PATH + ApiConstant.EQUIPMENT_SAVED_IMAGE_PATH;
 
         if (filePart == null || filePart.getSize() == 0) {
-            return null; // no image uploaded
+            return null;
         }
 
         // Get original filename
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
         String uniqueName = System.currentTimeMillis() + "_" + fileName;
 
-        // Save to /uploads/equipment/ inside webapp
-        String uploadDir = getServletContext().getRealPath("/uploads/equipment/");
-        File dir = new File(uploadDir);
+        System.out.println(staticImagePath);
+        File dir = new File(staticImagePath);
         if (!dir.exists()) dir.mkdirs();
 
-        filePart.write(uploadDir + File.separator + uniqueName);
+        filePart.write(staticImagePath + File.separator + uniqueName);
 
-        return "uploads/equipment/" + uniqueName; // relative path for JSP <img src>
+        return ApiConstant.EQUIPMENT_SAVED_IMAGE_PATH + uniqueName;
     }
 }

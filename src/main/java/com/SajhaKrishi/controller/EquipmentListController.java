@@ -30,7 +30,6 @@ public class EquipmentListController extends HttpServlet {
 			throws ServletException, IOException {
 
 		String pathInfo = request.getPathInfo();
-		System.out.print("[][][][]]");
 
 		if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/list")) {
 			handleBrowse(request, response);
