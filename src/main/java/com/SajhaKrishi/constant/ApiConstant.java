@@ -10,6 +10,18 @@ public class ApiConstant {
 	public static final String ADD = "/add";
 	public static final String EDIT = "/edit";
 	public static final String LIST = "/list";
+	public static final String UNAUTHORIZED = "/unauthorized";
+	
+	public static final String HOME = "/home";
+	
+	
+	
+	public static final String USER_SESSION_KEY = "user";
+	
+    // Static resource paths
+    public static final String CSS = "/css/";
+    public static final String JS = "/js/";
+    public static final String IMAGES = "/images/";
 
 	public static String getLogin() {
 		return LOGIN;

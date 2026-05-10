@@ -7,12 +7,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import com.SajhaKrishi.constant.ApiConstant;
 import com.SajhaKrishi.constant.PageConstant;
 
 /**
  * Servlet implementation class HomePageController
  */
-@WebServlet("/home")
+@WebServlet({ApiConstant.HOME, "/"})
 public class HomePageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
