@@ -29,78 +29,47 @@
 								<th>Image</th>
 								<th>Name</th>
 								<th>Category</th>
-								<th>Stock</th>
-								<th>Rental Price</th>
+								<th>Rental Price (per day)</th>
+								<th>Rental Price (per hour)</th>
+							<!-- 	<th>Status</th> -->
+								<th>Location</th>
 								<th>Actions</th>
 							</tr>
 						</thead>
 
 						<tbody>
+							<c:forEach var="equipment" items="${equipmentList}">
+								<tr>
+									<td>
+										<div class="img-box">
+											<img
+												src="${pageContext.request.contextPath}${equipment.imagePath}"
+												onerror="this.src='${pageContext.request.contextPath}/assets/noImage.svg';" />
+										</div>
+									</td>
 
-							<!-- ROW -->
-							<tr>
-								<td>
-									<!-- <div class="img-box">🚜</div> -->
-								</td>
+									<td class="name">${equipment.name }</td>
+									<td class="category">${equipment.categoryName }</td>
 
-								<td class="name">Tractor</td>
+									<td class="price">Rs. ${equipment.pricePerDay} /day</td>
+									<td class="price">Rs. ${equipment.pricePerHour} /hour</td>
+<%-- 									<td><span
+										class="status-pill ${equipment.availabilityStatus.toLowerCase()}">
+											${equipment.availabilityStatus} </span></td> --%>
+									<td class="location">${equipment.municipality},
+										${equipment.district}</td>
 
-								<td class="category">Heavy</td>
-
-								<td><input type="number" value="5" min="0"
-									class="stock-input"></td>
-
-								<td class="price">Rs. 1500/day</td>
-
-								<td>
-									<div class="actions">
-										<button class="btn btn-outline">Edit</button>
-										<button class="btn btn-danger">Remove</button>
-									</div>
-								</td>
-							</tr>
-
-							<!-- ROW -->
-							<tr>
-								<td>
-									<!-- <div class="img-box">🚜</div> -->
-								</td>
-
-								<td class="name">Mini Tiller</td>
-								<td class="category">Small Tools</td>
-
-								<td><input type="number" value="8" min="0"
-									class="stock-input"></td>
-
-								<td class="price">Rs. 500/day</td>
-
-								<td>
-									<div class="actions">
-										<button class="btn btn-outline">Edit</button>
-										<button class="btn btn-danger">Remove</button>
-									</div>
-								</td>
-							</tr>
-
-							<c:forEach var="name" items="${district}">
-								<td>
-									<!-- <div class="img-box">🚜</div> -->
-								</td>
-
-								<td class="name">Mini Tiller</td>
-								<td class="category">Small Tools</td>
-
-								<td><input type="number" value="8" min="0"
-									class="stock-input"></td>
-
-								<td class="price">Rs. 500/day</td>
-
-								<td>
-									<div class="actions">
-										<button class="btn btn-outline">Edit</button>
-										<button class="btn btn-danger">Remove</button>
-									</div>
-								</td>
+									<td>
+										<div class="actions">
+											<button
+												onclick="location.href='${pageContext.request.contextPath}/owner/equipment/edit?id=${equipment.id}'"
+												class="btn btn-outline">Edit</button>
+											<button
+												onclick="location.href='${pageContext.request.contextPath}/owner/equipment/delete?id=${equipment.id}'"
+												class="btn btn-danger">Remove</button>
+										</div>
+									</td>
+								</tr>
 							</c:forEach>
 
 						</tbody>

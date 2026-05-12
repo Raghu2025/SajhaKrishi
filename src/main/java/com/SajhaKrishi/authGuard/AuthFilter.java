@@ -8,7 +8,7 @@ import java.io.IOException;
 import com.SajhaKrishi.constant.ApiConstant;
 import com.SajhaKrishi.model.User;
 
-//@WebFilter("/*")
+@WebFilter("/*")
 public class AuthFilter implements Filter {
 
 	@Override
@@ -21,62 +21,60 @@ public class AuthFilter implements Filter {
 		String path = request.getServletPath();
 
 		boolean isPublicPage = isPublicPage(path);
-		 chain.doFilter(request, response);
-		 return;
 
-//		// Public pages
-//		if (isPublicPage) {
-//			chain.doFilter(request, response);
-//			return;
-//		}
+		// Public pages
+		if (isPublicPage) {
+			chain.doFilter(request, response);
+			return;
+		}
+
+		HttpSession session = request.getSession(false);
+
+		User user = null;
+
+		if (session != null) {
+			user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
+		}
+
+		boolean isLoggedIn = (user != null);
+//        
+//        User  user = (User) request.getSession(false) != null
+//                ? (User) request.getSession().getAttribute(ApiConstant.USER_SESSION_KEY)
+//                : null;
+
+		// 2. Not logged in
+		if (!isLoggedIn) {
+			response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
+			return;
+		}
 //
-//		HttpSession session = request.getSession(false);
+//        // ── 3. Logged in — check role matches URL ──
+//        int role = user.getRole(); // 1=Admin, 2=Owner, 3=Kisan
 //
-//		User user = null;
+//        if (path.startsWith("/admin/") && role != 1) {
+//            response.sendRedirect(request.getContextPath() + "/unauthorized");
+//            return;
+//        }
 //
-//		if (session != null) {
-//			user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
-//		}
+//        if (path.startsWith("/owner/") && role != 2) {
+//            response.sendRedirect(request.getContextPath() + "/unauthorized");
+//            return;
+//        }
 //
-//		boolean isLoggedIn = (user != null);
-////        
-////        User  user = (User) request.getSession(false) != null
-////                ? (User) request.getSession().getAttribute(ApiConstant.USER_SESSION_KEY)
-////                : null;
-//
-//		// 2. Not logged in
-//		if (!isLoggedIn) {
-//			response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
-//			return;
-//		}
-////
-////        // ── 3. Logged in — check role matches URL ──
-////        int role = user.getRole(); // 1=Admin, 2=Owner, 3=Kisan
-////
-////        if (path.startsWith("/admin/") && role != 1) {
-////            response.sendRedirect(request.getContextPath() + "/unauthorized");
-////            return;
-////        }
-////
-////        if (path.startsWith("/owner/") && role != 2) {
-////            response.sendRedirect(request.getContextPath() + "/unauthorized");
-////            return;
-////        }
-////
-////        if (path.startsWith("/kisan/") && role != 3) {
-////            response.sendRedirect(request.getContextPath() + "/unauthorized");
-////            return;
-////        }
-//
-//		// 4. All checks passed — let through
-//		chain.doFilter(request, response);
+//        if (path.startsWith("/kisan/") && role != 3) {
+//            response.sendRedirect(request.getContextPath() + "/unauthorized");
+//            return;
+//        }
+
+		// 4. All checks passed — let through
+		chain.doFilter(request, response);
 	}
 
 	// Pages anyone can access without login
 	private boolean isPublicPage(String path) {
 		return path.equals(ApiConstant.LOGIN) || path.equals(ApiConstant.REGISTER) || path.equals(ApiConstant.HOME)
 				|| path.equals("/") || path.startsWith(ApiConstant.CSS) || path.startsWith(ApiConstant.JS)
-				|| path.startsWith(ApiConstant.IMAGES) || path.equals(ApiConstant.KISSAN_EQUIPMENT)
+				|| path.startsWith(ApiConstant.IMAGES) ||  path.startsWith(ApiConstant.UPLOADS) || path.equals(ApiConstant.KISSAN_EQUIPMENT)
 				|| path.equals(ApiConstant.UNAUTHORIZED);
 	}
 }

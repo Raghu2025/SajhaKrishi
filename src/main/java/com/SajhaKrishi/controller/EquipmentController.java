@@ -25,407 +25,337 @@ import com.SajhaKrishi.model.User;
 import com.SajhaKrishi.utils.ValidationUtil;
 
 @WebServlet(ApiConstant.OWNER_EQUIPMENT + "/*")
-@MultipartConfig(
-    fileSizeThreshold = 1024 * 1024,       // 1MB — file written to disk after this
-    maxFileSize       = 1024 * 1024 * 10,  // 10MB max per file
-    maxRequestSize    = 1024 * 1024 * 15   // 15MB max whole request
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1MB — file written to disk after this
+		maxFileSize = 1024 * 1024 * 10, // 10MB max per file
+		maxRequestSize = 1024 * 1024 * 15 // 15MB max whole request
 )
 public class EquipmentController extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-    private EquipmentDao equipmentDao;
-    private CategoryDao categoryDao;
+	private static final long serialVersionUID = 1L;
+	private EquipmentDao equipmentDao;
+	private CategoryDao categoryDao;
 
-    @Override
-    public void init() {
-        equipmentDao = new EquipmentDao();
-        categoryDao = new CategoryDao();
-    }
+	@Override
+	public void init() {
+		equipmentDao = new EquipmentDao();
+		categoryDao = new CategoryDao();
+	}
 
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+		String pathInfo = request.getPathInfo();
 
-        String pathInfo = request.getPathInfo();
+		if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals(ApiConstant.LIST)) {
+			handleList(request, response);
 
-        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals(ApiConstant.LIST)) {
-            handleList(request, response);
+		} else if (pathInfo.equals(ApiConstant.ADD)) {
+			handleAddPage(request, response);
 
-        } else if (pathInfo.equals(ApiConstant.ADD)) {
-            handleAddPage(request, response);
+		} else if (pathInfo.equals(ApiConstant.EDIT)) {
+			handleEditPage(request, response);
 
-        } else if (pathInfo.equals(ApiConstant.EDIT)) {
-            handleEditPage(request, response);
+		} else if (pathInfo.equals(ApiConstant.DELETE)) {
+			handleDelete(request, response);
 
-        } else if (pathInfo.equals(ApiConstant.DELETE)) {
-            handleDelete(request, response);
+		} else if (pathInfo.equals("/view")) {
+			handleView(request, response);
 
-        } else if (pathInfo.equals("/view")) {
-            handleView(request, response);
+		} else {
+			response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.LIST);
+		}
+	}
 
-        } else {
-            response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.LIST);
-        }
-    }
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		handleSave(request, response);
+	}
 
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String pathInfo = request.getPathInfo();
-
-        if (pathInfo.equals("/add")) {
-            handleAdd(request, response);
-
-        } else if (pathInfo.equals("/edit")) {
-            handleEdit(request, response);
-
-        } else {
-            response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
-        }
-    }
-
-    /**
-     * Equipment list
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    private void handleList(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        User user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
-        request.setAttribute("equipmentList", equipmentDao.getEquipmentByOwner(user.getId()));
-        System.out.print(equipmentDao.getEquipmentByOwner(user.getId()));
-    	request.setAttribute("selectedNavItem", "equipment");
+	/**
+	 * Equipment list
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void handleList(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
+		User user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
+		request.setAttribute("equipmentList", equipmentDao.getEquipmentByOwner(user.getId()));
+		request.setAttribute("selectedNavItem", "equipment");
 		request.setAttribute("contentPage", PageConstant.EQUIPMENT_LIST);
 		request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
-    }
+	}
 
+	/**
+	 * Equipment Add
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void handleAddPage(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		loadFormData(request, response);
+	}
 
-    /**
-     * Equipment Add
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    private void handleAddPage(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	List<CategoryModel> categoryList = categoryDao.getAllCategories();
-    	request.setAttribute("district", DropdownConstant.DISTRICT);
-    	request.setAttribute("categoryList", categoryList);
-    	request.setAttribute("selectedNavItem", "equipment");
+	private void loadFormData(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		List<CategoryModel> categoryList = categoryDao.getAllCategories();
+		request.setAttribute("district", DropdownConstant.DISTRICT);
+		request.setAttribute("categoryList", categoryList);
+		request.setAttribute("selectedNavItem", "equipment");
 		request.setAttribute("contentPage", PageConstant.EQUIPMENT_ADD);
 		request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
-    }
+	}
 
+	/**
+	 * Equipment Add form handle
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void handleSave(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-    /**
-     * Equipment Add form handle
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    private void handleAdd(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+		HttpSession session = request.getSession(false);
+		User owner = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
 
-        HttpSession session = request.getSession(false);
-        User owner = (User) session.getAttribute("user");
-        System.out.print(owner.toString());
+		// 1. Determine if this is an Edit or Add based on ID presence
+		String idParam = request.getParameter("id");
+		boolean isEdit = idParam != null && !idParam.isEmpty();
+		int id = isEdit ? Integer.parseInt(idParam) : 0;
 
-        try {
-            // — Get form fields —
-            String equipmentName      = request.getParameter("name");
-            String category           = request.getParameter("category");
-            String description        = request.getParameter("description");
-            String brand              = request.getParameter("brand");
-            int    manufactureYear    = ValidationUtil.parseInt(request.getParameter("manufactureYear"));
-            double pricePerDay        = ValidationUtil.parseDouble(request.getParameter("pricePerDay"));
-            double pricePerHour       = ValidationUtil.parseDouble(request.getParameter("pricePerHour"));
-            double depositAmount      = ValidationUtil.parseDouble(request.getParameter("depositAmount"));
-            String availabilityStatus = request.getParameter("availabilityStatus");
-            String availableFrom      = request.getParameter("availableFrom");
-            String availableTo        = request.getParameter("availableTo");
-            String district           = request.getParameter("district");
-            String municipality       = request.getParameter("municipality");
-            String address            = request.getParameter("address");
-            String condition          = request.getParameter("condition");
-            String specifications     = request.getParameter("specifications");
-            String fuelType           = request.getParameter("fuelType");
+		try {
+			// 2. Fetch existing for Edit (to keep image/owner)
+			EquipmentModel equipment = isEdit ? equipmentDao.getEquipmentById(id) : new EquipmentModel();
 
-            System.out.print("raghu: " + equipmentName);
-            // — Validation —
-            if (equipmentName == null || equipmentName.trim().isEmpty()) {
-                request.setAttribute("error", "Equipment name is required.");
-                this.handleAddPage(request, response);
-                return;
-            }
+			if (isEdit && equipment == null) {
+				response.sendRedirect(request.getContextPath() + ApiConstant.OWNER_EQUIPMENT);
+				return;
+			}
 
-            if (pricePerDay <= 0) {
-                request.setAttribute("error", "Price per day must be greater than 0.");
-                this.handleAddPage(request, response);
-                return;
-            }
+			// 3. Extract & Validate Common Fields
+			String name = request.getParameter("name"); // Handle your minor naming diffs
+			double priceDay = ValidationUtil.parseDouble(request.getParameter("pricePerDay"));
 
-            // — Handle image upload —
-            String imagePath = handleImageUpload(request, response);
+			if (name == null || name.trim().isEmpty() || priceDay <= 0) {
+				request.setAttribute("error", "Name is required and price must be positive.");
+				forwardToForm(request, response, isEdit);
+				return;
+			}
 
-            // — Build model —
-            EquipmentModel equipment = new EquipmentModel();
-            equipment.setName(equipmentName);
-            equipment.setCategoryId(category);
-            equipment.setDescription(description);
-            equipment.setBrand(brand);
-            equipment.setManufactureYear(manufactureYear);
-            equipment.setPricePerDay(pricePerDay);
-            equipment.setPricePerHour(pricePerHour);
-            equipment.setDepositAmount(depositAmount);
-            equipment.setAvailabilityStatus(availabilityStatus);
-            equipment.setAvailableFrom(availableFrom);
-            equipment.setAvailableTo(availableTo);
-            equipment.setDistrict(district);
-            equipment.setMunicipality(municipality);
-            equipment.setAddress(address);
-            equipment.setCondition(condition);
-            equipment.setSpecifications(specifications);
-            equipment.setFuelType(fuelType);
-            equipment.setImagePath(imagePath);
-            equipment.setOwnerId(owner.getId());
-            equipment.setStatus("A");
+			// 4. Update Model Fields
+			equipment.setName(name);
+			equipment.setCategoryId(request.getParameter("category"));
+			equipment.setDescription(request.getParameter("description"));
+			equipment.setBrand(request.getParameter("brand"));
+			equipment.setManufactureYear(ValidationUtil.parseInt(request.getParameter("manufactureYear")));
+			equipment.setPricePerDay(priceDay);
+			equipment.setPricePerHour(ValidationUtil.parseDouble(request.getParameter("pricePerHour")));
+			equipment.setDepositAmount(ValidationUtil.parseDouble(request.getParameter("depositAmount")));
+			equipment.setAvailabilityStatus(request.getParameter("availabilityStatus"));
+			equipment.setAvailableFrom(request.getParameter("availableFrom"));
+			equipment.setAvailableTo(request.getParameter("availableTo"));
+			equipment.setDistrict(request.getParameter("district"));
+			equipment.setMunicipality(request.getParameter("municipality"));
+			equipment.setAddress(request.getParameter("address"));
+			equipment.setCondition(request.getParameter("condition"));
+			equipment.setSpecifications(request.getParameter("specifications"));
+			equipment.setFuelType(request.getParameter("fuelType"));
 
-            // — Save to DB —
-            boolean success = equipmentDao.addEquipment(equipment);
+			// 5. Image Logic (Keep old if new is empty)
+			String newImagePath = handleImageUpload(request, response);
+			if (newImagePath != null && !newImagePath.isEmpty()) {
+				equipment.setImagePath(newImagePath);
+			}
 
-            if (success) {
-                request.getSession().setAttribute("success", "Equipment added successfully!");
-                response.sendRedirect(request.getContextPath() + ApiConstant.OWNER_EQUIPMENT);
-            } else {
-                request.setAttribute("error", "Failed to add equipment. Please try again.");
-                this.handleAddPage(request, response);
-            }
+			// 6. Set Metadata
+			if (!isEdit) {
+				equipment.setOwnerId(owner.getId());
+				equipment.setStatus("A");
+			}
 
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "Invalid number format. Please check your inputs.");
-            this.handleAddPage(request, response);
-        } catch (Exception e) {
-        	e.printStackTrace();
-			System.err.println("Error adding equipment: " + e.getMessage());
-			request.setAttribute("error", "Something went wrong. Please try again.");
+			// 7. Database Operation
+			boolean success = isEdit ? equipmentDao.updateEquipment(equipment) : equipmentDao.addEquipment(equipment);
+
+			if (success) {
+				request.getSession().setAttribute("success", "Equipment saved successfully!");
+				response.sendRedirect(request.getContextPath() + ApiConstant.OWNER_EQUIPMENT);
+			} else {
+				request.setAttribute("error", "Database operation failed.");
+				request.setAttribute("equipment", equipment);
+				forwardToForm(request, response, isEdit);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			request.setAttribute("error", "An error occurred: " + e.getMessage());
+			forwardToForm(request, response, isEdit);
+		}
+	}
+
+	/**
+	 * Helper to handle the forwarding logic
+	 * 
+	 * @param request
+	 * @param response
+	 * @param isEdit
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void forwardToForm(HttpServletRequest request, HttpServletResponse response, boolean isEdit)
+			throws ServletException, IOException {
+		String path = isEdit ? PageConstant.EQUIPMENT_ADD : PageConstant.EQUIPMENT_ADD;
+		if (!isEdit) {
+			this.handleEditPage(request, response);
+		} else {
 			this.handleAddPage(request, response);
-        }
-    }
+		}
+	}
 
-    /**
-     * Equipment Update
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    private void handleEditPage(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	/**
+	 * Equipment Update
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void handleEditPage(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		try {
+			int id = Integer.parseInt(request.getParameter("id"));
+			EquipmentModel equipment = equipmentDao.getEquipmentById(id);
 
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            EquipmentModel equipment = equipmentDao.getEquipmentById(id);
+			if (equipment == null) {
+				response.sendRedirect(request.getContextPath() + ApiConstant.OWNER_EQUIPMENT);
+				return;
+			}
 
-            if (equipment == null) {
-                response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
-                return;
-            }
+			request.setAttribute("equipment", equipment);
 
-            request.setAttribute("equipment", equipment);
-            request.getRequestDispatcher("/WEB-INF/views/owner/equipment-edit.jsp")
-                   .forward(request, response);
+			// Load dropdowns same as add page
+			loadFormData(request, response);
 
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
-        }
-    }
+		} catch (NumberFormatException e) {
+			response.sendRedirect(request.getContextPath() + ApiConstant.OWNER_EQUIPMENT);
+		}
+	}
 
-    /**
-     * Equipment Edit
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    private void handleEdit(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	/**
+	 * Equipment View
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void handleView(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
+		try {
+			int id = Integer.parseInt(request.getParameter("id"));
+			EquipmentModel equipment = equipmentDao.getEquipmentById(id);
 
-            // — Get existing equipment (to keep old image if no new one uploaded) —
-            EquipmentModel existing = equipmentDao.getEquipmentById(id);
-            if (existing == null) {
-                response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
-                return;
-            }
+			if (equipment == null) {
+				response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
+				return;
+			}
 
-            // — Get form fields —
-            String equipmentName      = request.getParameter("equipmentName");
-            String category           = request.getParameter("category");
-            String description        = request.getParameter("description");
-            String brand              = request.getParameter("brand");
-            int    manufactureYear    = Integer.parseInt(request.getParameter("manufactureYear"));
-            double pricePerDay        = Double.parseDouble(request.getParameter("pricePerDay"));
-            double pricePerHour       = Double.parseDouble(request.getParameter("pricePerHour"));
-            double depositAmount      = Double.parseDouble(request.getParameter("depositAmount"));
-            String availabilityStatus = request.getParameter("availabilityStatus");
-            String availableFrom      = request.getParameter("availableFrom");
-            String availableTo        = request.getParameter("availableTo");
-            String district           = request.getParameter("district");
-            String municipality       = request.getParameter("municipality");
-            String address            = request.getParameter("address");
-            String condition          = request.getParameter("condition");
-            String specifications     = request.getParameter("specifications");
-            String fuelType           = request.getParameter("fuelType");
+			request.setAttribute("equipment", equipment);
+			request.getRequestDispatcher("/WEB-INF/views/owner/equipment-view.jsp").forward(request, response);
 
-            // — Handle image — keep old if no new image uploaded —
-            String imagePath = handleImageUpload(request, response);
-            if (imagePath == null || imagePath.isEmpty()) {
-                imagePath = existing.getImagePath(); // keep old image
-            }
+		} catch (NumberFormatException e) {
+			response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
+		}
+	}
 
-            // — Build updated model —
-            EquipmentModel equipment = new EquipmentModel(id);
-            equipment.setName(equipmentName);
-            equipment.setCategoryId(category);
-            equipment.setDescription(description);
-            equipment.setBrand(brand);
-            equipment.setManufactureYear(manufactureYear);
-            equipment.setPricePerDay(pricePerDay);
-            equipment.setPricePerHour(pricePerHour);
-            equipment.setDepositAmount(depositAmount);
-            equipment.setAvailabilityStatus(availabilityStatus);
-            equipment.setAvailableFrom(availableFrom);
-            equipment.setAvailableTo(availableTo);
-            equipment.setDistrict(district);
-            equipment.setMunicipality(municipality);
-            equipment.setAddress(address);
-            equipment.setCondition(condition);
-            equipment.setSpecifications(specifications);
-            equipment.setFuelType(fuelType);
-            equipment.setImagePath(imagePath);
-            equipment.setOwnerId(existing.getOwnerId());
+	/**
+	 * Equipment Delete
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void handleDelete(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-            // — Save to DB —
-            boolean success = equipmentDao.updateEquipment(equipment);
+		try {
+			int id = Integer.parseInt(request.getParameter("id"));
+			boolean success = equipmentDao.deleteEquipment(id);
 
-            if (success) {
-                request.getSession().setAttribute("success", "Equipment updated successfully!");
-                response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
-            } else {
-                request.setAttribute("error", "Failed to update equipment.");
-                request.setAttribute("equipment", equipment);
-                request.getRequestDispatcher("/WEB-INF/views/owner/equipment-edit.jsp")
-                       .forward(request, response);
-            }
+			if (success) {
+				request.getSession().setAttribute("success", "Equipment deleted successfully!");
+			} else {
+				request.getSession().setAttribute("error", "Failed to delete equipment.");
+			}
 
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "Invalid input. Please check your fields.");
-            request.getRequestDispatcher("/WEB-INF/views/owner/equipment-edit.jsp")
-                   .forward(request, response);
-        } catch (Exception e) {
-            System.err.println("Error updating equipment: " + e.getMessage());
-            request.setAttribute("error", "Something went wrong. Please try again.");
-            request.getRequestDispatcher("/WEB-INF/views/owner/equipment-edit.jsp")
-                   .forward(request, response);
-        }
-    }
+		} catch (NumberFormatException e) {
+			request.getSession().setAttribute("error", "Invalid equipment ID.");
+		}
 
+		response.sendRedirect(request.getContextPath() + ApiConstant.OWNER_EQUIPMENT);
+	}
 
-    /**
-     * Equipment View
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    private void handleView(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	/**
+	 * Equipment upload
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 * @throws ServletException
+	 */
+//    private String handleImageUpload(HttpServletRequest request, HttpServletResponse response)
+//            throws IOException, ServletException {
+//
+//        Part filePart = request.getPart("image");
+//        String staticImagePath = ApiConstant.SAVED_IMAGE_PATH + ApiConstant.EQUIPMENT_SAVED_IMAGE_PATH;
+//
+//        if (filePart == null || filePart.getSize() == 0) {
+//            return null;
+//        }
+//
+//        // Get original filename
+//        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+//        String uniqueName = System.currentTimeMillis() + "_" + fileName;
+//
+//        System.out.println(staticImagePath);
+//        File dir = new File(staticImagePath);
+//        if (!dir.exists()) dir.mkdirs();
+//
+//        filePart.write(staticImagePath + File.separator + uniqueName);
+//
+//        return ApiConstant.EQUIPMENT_SAVED_IMAGE_PATH  + "/" + uniqueName;
+//    }
+	private String handleImageUpload(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            EquipmentModel equipment = equipmentDao.getEquipmentById(id);
+		Part filePart = request.getPart("image");
 
-            if (equipment == null) {
-                response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
-                return;
-            }
+		if (filePart == null || filePart.getSize() == 0) {
+			return null;
+		}
 
-            request.setAttribute("equipment", equipment);
-            request.getRequestDispatcher("/WEB-INF/views/owner/equipment-view.jsp")
-                   .forward(request, response);
+		String uploadDir = getServletContext().getRealPath(ApiConstant.EQUIPMENT_SAVED_IMAGE_PATH + "/");
+		File dir = new File(uploadDir);
+		if (!dir.exists())
+			dir.mkdirs();
 
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
-        }
-    }
+		String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+		String uniqueName = System.currentTimeMillis() + "_" + fileName;
 
+		filePart.write(uploadDir + File.separator + uniqueName);
 
-    /**
-     * Equipment Delete
-     * @param request
-     * @param response
-     * @throws ServletException
-     * @throws IOException
-     */
-    private void handleDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            boolean success = equipmentDao.deleteEquipment(id);
-
-            if (success) {
-                request.getSession().setAttribute("success", "Equipment deleted successfully!");
-            } else {
-                request.getSession().setAttribute("error", "Failed to delete equipment.");
-            }
-
-        } catch (NumberFormatException e) {
-            request.getSession().setAttribute("error", "Invalid equipment ID.");
-        }
-
-        response.sendRedirect(request.getContextPath() + "/owner/equipment/list");
-    }
-
-
-    /**
-     * Equipment upload
-     * @param request
-     * @param response
-     * @return
-     * @throws IOException
-     * @throws ServletException
-     */
-    private String handleImageUpload(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-
-        Part filePart = request.getPart("image");
-        String staticImagePath = ApiConstant.SAVED_IMAGE_PATH + ApiConstant.EQUIPMENT_SAVED_IMAGE_PATH;
-
-        if (filePart == null || filePart.getSize() == 0) {
-            return null;
-        }
-
-        // Get original filename
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-        String uniqueName = System.currentTimeMillis() + "_" + fileName;
-
-        System.out.println(staticImagePath);
-        File dir = new File(staticImagePath);
-        if (!dir.exists()) dir.mkdirs();
-
-        filePart.write(staticImagePath + File.separator + uniqueName);
-
-        return ApiConstant.EQUIPMENT_SAVED_IMAGE_PATH + uniqueName;
-    }
+		return ApiConstant.EQUIPMENT_SAVED_IMAGE_PATH + "/" + uniqueName;
+	}
 }

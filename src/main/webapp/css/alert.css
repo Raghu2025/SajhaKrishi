@@ -1,0 +1,69 @@
+@charset "UTF-8";
+@import "global.css";
+
+/* Container for alerts to stack them neatly */
+.alert-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Base Alert Style */
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: fixed;
+    top: 10;
+    right: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    animation: slideIn 0.5s ease-out;
+}
+
+/* Success Alert (Green) */
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+/* Error Alert (Red) */
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+/* Close Button Styling */
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: inherit;
+    font-weight: bold;
+    line-height: 1;
+    margin-left: 15px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Simple Slide-in Animation */
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

@@ -12,317 +12,370 @@ import com.SajhaKrishi.model.EquipmentModel;
 
 public class EquipmentDao {
 
-    Connection conn;
+	Connection conn;
 
-    public EquipmentDao() {
-        try {
-            conn = DBConnection.getConnection();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
+	public EquipmentDao() {
+		try {
+			conn = DBConnection.getConnection();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
 
-    // ════════════════════════════
-    //  CREATE
-    // ════════════════════════════
-    public boolean addEquipment(EquipmentModel equipment) {
-        String query = "INSERT INTO equipment (name, category_id, description, brand, manufacture_year, " +
-                       "price_per_day, price_per_hour, deposit_amount, availability_status, " +
-                       "available_from, available_to, district, municipality, address, " +
-                       "condition_, specifications, fuel_type, image_path, owner_id, status) " +
-                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	/**
+	 * Add Equipment
+	 * 
+	 * @param equipment
+	 * @return
+	 */
 
-        if (conn == null) {
-            System.err.println("Database connection is null");
-            return false;
-        }
+	public boolean addEquipment(EquipmentModel equipment) {
+		String query = "INSERT INTO equipment (name, category_id, description, brand, manufacture_year, "
+				+ "price_per_day, price_per_hour, deposit_amount, availability_status, "
+				+ "available_from, available_to, district, municipality, address, "
+				+ "condition_, specifications, fuel_type, image_path, owner_id, status) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+		if (conn == null) {
+			System.err.println("Database connection is null");
+			return false;
+		}
 
-            pstmt.setString(1,  equipment.getName());
-            pstmt.setString(2,  equipment.getCategoryId());
-            pstmt.setString(3,  equipment.getDescription());
-            pstmt.setString(4,  equipment.getBrand());
-            pstmt.setInt(5,     equipment.getManufactureYear());
-            pstmt.setDouble(6,  equipment.getPricePerDay());
-            pstmt.setDouble(7,  equipment.getPricePerHour());
-            pstmt.setDouble(8,  equipment.getDepositAmount());
-            pstmt.setString(9,  equipment.getAvailabilityStatus());
-            pstmt.setString(10, equipment.getAvailableFrom());
-            pstmt.setString(11, equipment.getAvailableTo());
-            pstmt.setString(12, equipment.getDistrict());
-            pstmt.setString(13, equipment.getMunicipality());
-            pstmt.setString(14, equipment.getAddress());
-            pstmt.setString(15, equipment.getCondition());
-            pstmt.setString(16, equipment.getSpecifications());
-            pstmt.setString(17, equipment.getFuelType());
-            pstmt.setString(18, equipment.getImagePath());
-            pstmt.setInt(19,    equipment.getOwnerId());
-            pstmt.setString(20, equipment.getStatus());
+		try (PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            int rowsInserted = pstmt.executeUpdate();
+			pstmt.setString(1, equipment.getName());
+			pstmt.setString(2, equipment.getCategoryId());
+			pstmt.setString(3, equipment.getDescription());
+			pstmt.setString(4, equipment.getBrand());
+			pstmt.setInt(5, equipment.getManufactureYear());
+			pstmt.setDouble(6, equipment.getPricePerDay());
+			pstmt.setDouble(7, equipment.getPricePerHour());
+			pstmt.setDouble(8, equipment.getDepositAmount());
+			pstmt.setString(9, equipment.getAvailabilityStatus());
+			pstmt.setString(10, equipment.getAvailableFrom());
+			pstmt.setString(11, equipment.getAvailableTo());
+			pstmt.setString(12, equipment.getDistrict());
+			pstmt.setString(13, equipment.getMunicipality());
+			pstmt.setString(14, equipment.getAddress());
+			pstmt.setString(15, equipment.getCondition());
+			pstmt.setString(16, equipment.getSpecifications());
+			pstmt.setString(17, equipment.getFuelType());
+			pstmt.setString(18, equipment.getImagePath());
+			pstmt.setInt(19, equipment.getOwnerId());
+			pstmt.setString(20, equipment.getStatus());
 
-            if (rowsInserted > 0) {
-                System.out.println("Equipment added successfully");
-                return true;
-            } else {
-                System.err.println("Equipment insertion failed");
-                return false;
-            }
+			int rowsInserted = pstmt.executeUpdate();
 
-        } catch (SQLException e) {
-            System.err.println("Error while adding equipment: " + e.getMessage());
-            return false;
-        }
-    }
+			if (rowsInserted > 0) {
+				System.out.println("Equipment added successfully");
+				return true;
+			} else {
+				System.err.println("Equipment insertion failed");
+				return false;
+			}
 
-    // ════════════════════════════
-    //  READ — Single
-    // ════════════════════════════
-    public EquipmentModel getEquipmentById(int id) {
-        String query = "SELECT * FROM equipment WHERE id = ?";
+		} catch (SQLException e) {
+			System.err.println("Error while adding equipment: " + e.getMessage());
+			return false;
+		}
+	}
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+	/**
+	 * Get Single Data
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public EquipmentModel getEquipmentById(int id) {
+		String query = "SELECT e.*, c.name AS category_name FROM equipment e JOIN category c ON e.category_id = c.id WHERE e.id = ? AND e.status = 'A'";
 
-            pstmt.setInt(1, id);
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToEquipment(rs);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching equipment by ID: " + e.getMessage());
-        }
-        return null;
-    }
+			pstmt.setInt(1, id);
 
-    // ════════════════════════════
-    //  READ — All
-    // ════════════════════════════
-    public List<EquipmentModel> getAllEquipment() {
-        List<EquipmentModel> equipmentList = new ArrayList<>();
-        String query = "SELECT e.*, c.category_name " +
-                "FROM equipment e " +
-                "LEFT JOIN categories c ON e.category_id = c.id " +
-                "WHERE e.status = 'A'";
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					return mapResultSetToEquipment(rs);
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Error fetching equipment by ID: " + e.getMessage());
+		}
+		return null;
+	}
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
+	/**
+	 * Get All Equipment
+	 * 
+	 * @return
+	 */
+	public List<EquipmentModel> getAllEquipment() {
+		List<EquipmentModel> equipmentList = new ArrayList<>();
+		String query = "SELECT e.*, c.category_name " + "FROM equipment e "
+				+ "LEFT JOIN categories c ON e.category_id = c.id " + "WHERE e.status = 'A'";
 
-            while (rs.next()) {
-                equipmentList.add(mapResultSetToEquipment(rs));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching all equipment: " + e.getMessage());
-        }
-        return equipmentList;
-    }
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(query);
+				ResultSet rs = pstmt.executeQuery()) {
 
-    // ════════════════════════════
-    //  READ — By Owner
-    // ════════════════════════════
-    public List<EquipmentModel> getEquipmentByOwner(int ownerId) {
-        List<EquipmentModel> equipmentList = new ArrayList<>();
-        String query = "SELECT * FROM equipment WHERE owner_id = ? AND status = 'A'";
+			while (rs.next()) {
+				equipmentList.add(mapResultSetToEquipment(rs));
+			}
+		} catch (SQLException e) {
+			System.err.println("Error fetching all equipment: " + e.getMessage());
+		}
+		return equipmentList;
+	}
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+	/**
+	 * Get Equipment By Owner
+	 * 
+	 * @param ownerId
+	 * @return
+	 */
+	public List<EquipmentModel> getEquipmentByOwner(int ownerId) {
+		List<EquipmentModel> equipmentList = new ArrayList<>();
+		String query = "SELECT e.*, c.name AS category_name FROM equipment e JOIN category c ON e.category_id = c.id WHERE e.owner_id = ? AND e.status = 'A'";
 
-            pstmt.setInt(1, ownerId);
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    equipmentList.add(mapResultSetToEquipment(rs));
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching equipment by owner: " + e.getMessage());
-        }
-        return equipmentList;
-    }
+			pstmt.setInt(1, ownerId);
 
-    // ════════════════════════════
-    //  READ — By Category
-    // ════════════════════════════
-    public List<EquipmentModel> getEquipmentByCategory(String category) {
-        List<EquipmentModel> equipmentList = new ArrayList<>();
-        String query = "SELECT * FROM equipment WHERE category = ? AND status = 'A' AND availability_status = 'Available'";
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					equipmentList.add(mapResultSetToEquipment(rs));
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Error fetching equipment by owner: " + e.getMessage());
+		}
+		return equipmentList;
+	}
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+	/**
+	 * Category
+	 * 
+	 * @param category
+	 * @return
+	 */
+	public List<EquipmentModel> getEquipmentByCategory(String category) {
+		List<EquipmentModel> equipmentList = new ArrayList<>();
+		String query = "SELECT * FROM equipment WHERE category = ? AND status = 'A' AND availability_status = 'Available'";
 
-            pstmt.setString(1, category);
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    equipmentList.add(mapResultSetToEquipment(rs));
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching equipment by category: " + e.getMessage());
-        }
-        return equipmentList;
-    }
+			pstmt.setString(1, category);
 
-    // ════════════════════════════
-    //  READ — By District
-    // ════════════════════════════
-    public List<EquipmentModel> getEquipmentByDistrict(String district) {
-        List<EquipmentModel> equipmentList = new ArrayList<>();
-        String query = "SELECT * FROM equipment WHERE district = ? AND status = 'A' AND availability_status = 'Available'";
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					equipmentList.add(mapResultSetToEquipment(rs));
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Error fetching equipment by category: " + e.getMessage());
+		}
+		return equipmentList;
+	}
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+	// ════════════════════════════
+	// READ — By District
+	// ════════════════════════════
+	public List<EquipmentModel> getEquipmentByDistrict(String district) {
+		List<EquipmentModel> equipmentList = new ArrayList<>();
+		String query = "SELECT * FROM equipment WHERE district = ? AND status = 'A' AND availability_status = 'Available'";
 
-            pstmt.setString(1, district);
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    equipmentList.add(mapResultSetToEquipment(rs));
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching equipment by district: " + e.getMessage());
-        }
-        return equipmentList;
-    }
+			pstmt.setString(1, district);
 
-    // ════════════════════════════
-    //  READ — Search
-    // ════════════════════════════
-    public List<EquipmentModel> searchEquipment(String keyword) {
-        List<EquipmentModel> equipmentList = new ArrayList<>();
-        String query = "SELECT * FROM equipment WHERE status = 'A' AND " +
-                       "(equipment_name LIKE ? OR category LIKE ? OR district LIKE ? OR brand LIKE ?)";
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					equipmentList.add(mapResultSetToEquipment(rs));
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Error fetching equipment by district: " + e.getMessage());
+		}
+		return equipmentList;
+	}
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+	/**
+	 * Filter Equipment
+	 * 
+	 * @param category
+	 * @param district
+	 * @param search
+	 * @return
+	 */
+	public List<EquipmentModel> searchEquipment(String category, String district, String search) {
+		List<EquipmentModel> list = new ArrayList<>();
 
-            String like = "%" + keyword + "%";
-            pstmt.setString(1, like);
-            pstmt.setString(2, like);
-            pstmt.setString(3, like);
-            pstmt.setString(4, like);
+		// 1. Base Query with the Join
+		StringBuilder sql = new StringBuilder("SELECT e.*, c.name AS category_name FROM equipment e "
+				+ "LEFT JOIN category c ON e.category_id = c.id " + "WHERE e.status = 'A' ");
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    equipmentList.add(mapResultSetToEquipment(rs));
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error searching equipment: " + e.getMessage());
-        }
-        return equipmentList;
-    }
+		// 2. Append filters dynamically
+		if (category != null && !category.isEmpty()) {
+			sql.append(" AND e.category_id = ?");
+		}
+		if (district != null && !district.isEmpty()) {
+			sql.append(" AND e.district = ?");
+		}
+		if (search != null && !search.isEmpty()) {
+			sql.append(" AND (e.name LIKE ? OR e.brand LIKE ? OR e.description LIKE ?)");
+		}
 
-    // ════════════════════════════
-    //  UPDATE
-    // ════════════════════════════
-    public boolean updateEquipment(EquipmentModel equipment) {
-        String query = "UPDATE equipment SET equipment_name=?, category=?, description=?, brand=?, " +
-                       "manufacture_year=?, price_per_day=?, price_per_hour=?, deposit_amount=?, " +
-                       "availability_status=?, available_from=?, available_to=?, district=?, " +
-                       "municipality=?, address=?, condition_status=?, specifications=?, " +
-                       "fuel_type=?, image_path=? WHERE id=?";
+		try (Connection conn = DBConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+			int paramIndex = 1;
 
-            pstmt.setString(1,  equipment.getName());
-            pstmt.setString(2,  equipment.getCategoryId());
-            pstmt.setString(3,  equipment.getDescription());
-            pstmt.setString(4,  equipment.getBrand());
-            pstmt.setInt(5,     equipment.getManufactureYear());
-            pstmt.setDouble(6,  equipment.getPricePerDay());
-            pstmt.setDouble(7,  equipment.getPricePerHour());
-            pstmt.setDouble(8,  equipment.getDepositAmount());
-            pstmt.setString(9,  equipment.getAvailabilityStatus());
-            pstmt.setString(10, equipment.getAvailableFrom());
-            pstmt.setString(11, equipment.getAvailableTo());
-            pstmt.setString(12, equipment.getDistrict());
-            pstmt.setString(13, equipment.getMunicipality());
-            pstmt.setString(14, equipment.getAddress());
-            pstmt.setString(15, equipment.getCondition());
-            pstmt.setString(16, equipment.getSpecifications());
-            pstmt.setString(17, equipment.getFuelType());
-            pstmt.setString(18, equipment.getImagePath());
-            pstmt.setInt(19,    equipment.getId());
+			// 3. Bind parameters in the EXACT same order they were appended
+			if (category != null && !category.isEmpty()) {
+				pstmt.setString(paramIndex++, category);
+			}
+			if (district != null && !district.isEmpty()) {
+				pstmt.setString(paramIndex++, district);
+			}
+			if (search != null && !search.isEmpty()) {
+				String searchPattern = "%" + search + "%";
+				pstmt.setString(paramIndex++, searchPattern); // for name
+				pstmt.setString(paramIndex++, searchPattern); // for brand
+				pstmt.setString(paramIndex++, searchPattern); // for description
+			}
 
-            return pstmt.executeUpdate() > 0;
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				list.add(mapResultSetToEquipment(rs)); // Helper method to fill your model
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
-        } catch (SQLException e) {
-            System.err.println("Error updating equipment: " + e.getMessage());
-            return false;
-        }
-    }
+	/**
+	 * Update Query
+	 * 
+	 * @param equipment
+	 * @return
+	 */
+	public boolean updateEquipment(EquipmentModel equipment) {
+		// Aligned column names with the addEquipment method (name, category_id,
+		// condition_, etc.)
+		System.out.print("Update");
+		String query = "UPDATE equipment SET name=?, category_id=?, description=?, brand=?, "
+				+ "manufacture_year=?, price_per_day=?, price_per_hour=?, deposit_amount=?, "
+				+ "availability_status=?, available_from=?, available_to=?, district=?, "
+				+ "municipality=?, address=?, condition_=?, specifications=?, "
+				+ "fuel_type=?, image_path=? WHERE id=?";
 
-    // ════════════════════════════
-    //  UPDATE — Availability Only
-    // ════════════════════════════
-    public boolean updateAvailabilityStatus(int id, String status) {
-        String query = "UPDATE equipment SET availability_status = ? WHERE id = ?";
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+			pstmt.setString(1, equipment.getName());
+			pstmt.setString(2, equipment.getCategoryId());
+			pstmt.setString(3, equipment.getDescription());
+			pstmt.setString(4, equipment.getBrand());
+			pstmt.setInt(5, equipment.getManufactureYear());
+			pstmt.setDouble(6, equipment.getPricePerDay());
+			pstmt.setDouble(7, equipment.getPricePerHour());
+			pstmt.setDouble(8, equipment.getDepositAmount());
+			pstmt.setString(9, equipment.getAvailabilityStatus());
+			pstmt.setString(10, equipment.getAvailableFrom());
+			pstmt.setString(11, equipment.getAvailableTo());
+			pstmt.setString(12, equipment.getDistrict());
+			pstmt.setString(13, equipment.getMunicipality());
+			pstmt.setString(14, equipment.getAddress());
+			pstmt.setString(15, equipment.getCondition());
+			pstmt.setString(16, equipment.getSpecifications());
+			pstmt.setString(17, equipment.getFuelType());
+			pstmt.setString(18, equipment.getImagePath());
 
-            pstmt.setString(1, status);
-            pstmt.setInt(2, id);
+			// The WHERE clause ID
+			pstmt.setInt(19, equipment.getId());
 
-            return pstmt.executeUpdate() > 0;
+			int rowsUpdated = pstmt.executeUpdate();
 
-        } catch (SQLException e) {
-            System.err.println("Error updating availability: " + e.getMessage());
-            return false;
-        }
-    }
+			if (rowsUpdated > 0) {
+				System.out.println("Equipment updated successfully");
+				return true;
+			} else {
+				System.err.println("Equipment update failed - No record found with ID: " + equipment.getId());
+				return false;
+			}
 
-    // ════════════════════════════
-    //  DELETE — Soft Delete
-    // ════════════════════════════
-    public boolean deleteEquipment(int id) {
-        String query = "UPDATE equipment SET status = 'I' WHERE id = ?";
+		} catch (SQLException e) {
+			System.err.println("Error while updating equipment: " + e.getMessage());
+			return false;
+		}
+	}
 
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+	// ════════════════════════════
+	// UPDATE — Availability Only
+	// ════════════════════════════
+	public boolean updateAvailabilityStatus(int id, String status) {
+		String query = "UPDATE equipment SET availability_status = ? WHERE id = ?";
 
-            pstmt.setInt(1, id);
-            return pstmt.executeUpdate() > 0;
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-        } catch (SQLException e) {
-            System.err.println("Error deleting equipment: " + e.getMessage());
-            return false;
-        }
-    }
+			pstmt.setString(1, status);
+			pstmt.setInt(2, id);
 
-    // ════════════════════════════
-    //  MAPPER
-    // ════════════════════════════
-    private EquipmentModel mapResultSetToEquipment(ResultSet rs) throws SQLException {
-        EquipmentModel equipment = new EquipmentModel(rs.getInt("id"));
-        equipment.setName(rs.getString("name"));
-        equipment.setCategoryId(rs.getString("category_id"));
-//        equipment.setCategoryName(rs.getString("category_name"));
-        equipment.setDescription(rs.getString("description"));
-        equipment.setBrand(rs.getString("brand"));
-        equipment.setManufactureYear(rs.getInt("manufacture_year"));
-        equipment.setPricePerDay(rs.getDouble("price_per_day"));
-        equipment.setPricePerHour(rs.getDouble("price_per_hour"));
-        equipment.setDepositAmount(rs.getDouble("deposit_amount"));
-        equipment.setAvailabilityStatus(rs.getString("availability_status"));
-        equipment.setAvailableFrom(rs.getString("available_from"));
-        equipment.setAvailableTo(rs.getString("available_to"));
-        equipment.setDistrict(rs.getString("district"));
-        equipment.setMunicipality(rs.getString("municipality"));
-        equipment.setAddress(rs.getString("address"));
-        equipment.setCondition(rs.getString("condition_"));
-        equipment.setSpecifications(rs.getString("specifications"));
-        equipment.setFuelType(rs.getString("fuel_type"));
-        equipment.setImagePath(rs.getString("image_path"));
-        equipment.setOwnerId(rs.getInt("owner_id"));
-        equipment.setStatus(rs.getString("status"));
-        return equipment;
-    }
+			return pstmt.executeUpdate() > 0;
+
+		} catch (SQLException e) {
+			System.err.println("Error updating availability: " + e.getMessage());
+			return false;
+		}
+	}
+
+	// ════════════════════════════
+	// DELETE — Soft Delete
+	// ════════════════════════════
+	public boolean deleteEquipment(int id) {
+		String query = "UPDATE equipment SET status = 'I' WHERE id = ?";
+
+		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+			pstmt.setInt(1, id);
+			return pstmt.executeUpdate() > 0;
+
+		} catch (SQLException e) {
+			System.err.println("Error deleting equipment: " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Mapper
+	 * 
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
+	private EquipmentModel mapResultSetToEquipment(ResultSet rs) throws SQLException {
+		EquipmentModel equipment = new EquipmentModel(rs.getInt("id"));
+		equipment.setName(rs.getString("name"));
+		equipment.setCategoryId(rs.getString("category_id"));
+		equipment.setCategoryName(rs.getString("category_name"));
+		equipment.setDescription(rs.getString("description"));
+		equipment.setBrand(rs.getString("brand"));
+		equipment.setManufactureYear(rs.getInt("manufacture_year"));
+		equipment.setPricePerDay(rs.getDouble("price_per_day"));
+		equipment.setPricePerHour(rs.getDouble("price_per_hour"));
+		equipment.setDepositAmount(rs.getDouble("deposit_amount"));
+		equipment.setAvailabilityStatus(rs.getString("availability_status"));
+		equipment.setAvailableFrom(rs.getString("available_from"));
+		equipment.setAvailableTo(rs.getString("available_to"));
+		equipment.setDistrict(rs.getString("district"));
+		equipment.setMunicipality(rs.getString("municipality"));
+		equipment.setAddress(rs.getString("address"));
+		equipment.setCondition(rs.getString("condition_"));
+		equipment.setSpecifications(rs.getString("specifications"));
+		equipment.setFuelType(rs.getString("fuel_type"));
+		equipment.setImagePath(rs.getString("image_path"));
+		equipment.setOwnerId(rs.getInt("owner_id"));
+		equipment.setStatus(rs.getString("status"));
+		return equipment;
+	}
 }

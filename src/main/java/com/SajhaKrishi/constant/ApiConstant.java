@@ -12,6 +12,7 @@ public class ApiConstant {
 	public static final String DELETE = "/delete";
 	public static final String LIST = "/list";
 	public static final String UNAUTHORIZED = "/unauthorized";
+	public static final String DETAIL = "/details";
 	
 	public static final String HOME = "/home";
 	
@@ -22,7 +23,9 @@ public class ApiConstant {
     // Static resource paths
     public static final String CSS = "/css/";
     public static final String JS = "/js/";
-    public static final String IMAGES = "/images/";
+    public static final String IMAGES = "/assets/";
+    public static final String UPLOADS = "/uploads/";
+    
     public static final String SAVED_IMAGE_PATH = "D:/eclipse-workspace/SajhaKrishi/src/main/webapp";
     public static final String EQUIPMENT_SAVED_IMAGE_PATH = "/uploads/equipment";
 
@@ -61,4 +64,49 @@ public class ApiConstant {
 	public static String getList() {
 		return LIST;
 	}
+
+	public static String getDelete() {
+		return DELETE;
+	}
+
+	public static String getUnauthorized() {
+		return UNAUTHORIZED;
+	}
+
+	public static String getDetail() {
+		return DETAIL;
+	}
+
+	public static String getHome() {
+		return HOME;
+	}
+
+	public static String getUserSessionKey() {
+		return USER_SESSION_KEY;
+	}
+
+	public static String getCss() {
+		return CSS;
+	}
+
+	public static String getJs() {
+		return JS;
+	}
+
+	public static String getImages() {
+		return IMAGES;
+	}
+
+	public static String getUploads() {
+		return UPLOADS;
+	}
+
+	public static String getSavedImagePath() {
+		return SAVED_IMAGE_PATH;
+	}
+
+	public static String getEquipmentSavedImagePath() {
+		return EQUIPMENT_SAVED_IMAGE_PATH;
+	}
+	
 }
