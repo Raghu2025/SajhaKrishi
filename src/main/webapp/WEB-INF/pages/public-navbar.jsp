@@ -1,17 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="com.SajhaKrishi.model.*" %>
+<%@ page import="com.SajhaKrishi.constant.*" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/css/public-navbar.css">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="jakarta.servlet.http.HttpSession"%>
 <%@ page import="jakarta.servlet.http.HttpServletRequest"%>
-
-<%
-    // Initialize necessary objects and variables
-    HttpSession userSession = request.getSession(false);
-    String currentUser = (String) (userSession != null ? userSession.getAttribute("user_id") : null);
-    pageContext.setAttribute("user_id", currentUser);
-%>
+<% 
+HttpSession userSession = request.getSession(false);
+            User currentUser = (User) (userSession != null ? userSession.getAttribute(ApiConstant.USER_SESSION_KEY) : null);
+            pageContext.setAttribute("currentUser", currentUser);
+        %>
 <header>
 	<div class="container nav">
 		<%--

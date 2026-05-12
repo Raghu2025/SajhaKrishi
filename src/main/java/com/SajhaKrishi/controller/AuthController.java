@@ -123,8 +123,22 @@ public class AuthController extends HttpServlet {
 
 	}
 
-	protected void handleLogout(HttpServletRequest request, HttpServletResponse response) {
+	protected void handleLogout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		// Get the current session (do not create a new one if it doesn't exist)
+		HttpSession session = request.getSession(false);
 
+		if (session != null) {
+			// Clear all data from the session
+			session.removeAttribute(ApiConstant.USER_SESSION_KEY);
+
+			// Completely destroy the session
+			session.invalidate();
+		}
+
+		// Redirect to login page or homepage with a success message
+		// You can also add a query parameter like ?logout=true to show a message on the
+		// login page
+		response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
 	}
 
 }

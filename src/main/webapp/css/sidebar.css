@@ -4,142 +4,150 @@
 
 /* Keep your Layout as is */
 .layout {
-    display: flex;
-    height: 100dvh;
-    width: 100dvw;
-    background: var(--color-bg-page);
+	display: flex;
+	height: 100dvh;
+	width: 100dvw;
+	background: var(--color-bg-page);
 }
 
 /* MODIFIED SIDEBAR: Added transition and min-width */
 .sidebar {
-    width: 260px; /* Your original width */
-    min-width: 260px;
-    background: var(--color-bg-card);
-    border-right: 1px solid #ddd;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth movement */
-    overflow: hidden; /* Prevents text from leaking out during collapse */
+	width: 260px; /* Your original width */
+	min-width: 260px;
+	background: var(--color-bg-card);
+	border-right: 1px solid #ddd;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 12px;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	/* Smooth movement */
+	overflow: hidden; /* Prevents text from leaking out during collapse */
 }
 
 /* THE COLLAPSED STATE */
 .sidebar.collapsed {
-    width: 80px;
-    min-width: 80px;
-    padding: 12px 8px; /* Slightly tighter padding */
+	width: 80px;
+	min-width: 80px;
+	padding: 12px 8px; /* Slightly tighter padding */
 }
 
 /* HIDE TEXT ELEMENTS WHEN COLLAPSED */
-.sidebar.collapsed span, 
-.sidebar.collapsed .nav-text,
-.sidebar.collapsed .user-box p, 
-.sidebar.collapsed .user-box small {
-    display: none;
+.sidebar.collapsed span, .sidebar.collapsed .nav-text, .sidebar.collapsed .user-box p,
+	.sidebar.collapsed .user-box small {
+	display: none;
 }
 
 /* ADJUST BUTTONS WHEN COLLAPSED */
 .sidebar.collapsed .new-btn {
-    padding: 10px 0;
-    font-size: 1.2rem;
+	padding: 10px 0;
+	font-size: 1.2rem;
 }
 
 .sidebar.collapsed .nav-item {
-    justify-content: center;
-    gap: 0;
+	justify-content: center;
+	gap: 0;
 }
 
 .sidebar.collapsed .nav-item i {
-    font-size: 20px; /* Slightly larger icons for visibility */
+	font-size: 20px; /* Slightly larger icons for visibility */
 }
 
 /* --- YOUR ORIGINAL STYLES (KEEP THESE) --- */
-
 .sidebar-top {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
 }
 
 .logo-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
 }
 
 .collapse-btn {
-    border: none;
-    background: transparent;
-    font-size: 18px;
-    cursor: pointer;
-    color: #000;
-    width: 100%; /* Makes it easier to click when collapsed */
-    text-align: right;
+	border: none;
+	background: transparent;
+	font-size: 18px;
+	cursor: pointer;
+	color: #000;
+	width: 100%; /* Makes it easier to click when collapsed */
+	text-align: right;
 }
 
 .sidebar.collapsed .collapse-btn {
-    text-align: center;
+	text-align: center;
 }
 
 .new-btn {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    background: var(--color-primary-subtle);
-    color: var(--color-primary);
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+	width: 100%;
+	padding: 10px;
+	border-radius: 8px;
+	border: none;
+	background: var(--color-primary-subtle);
+	color: var(--color-primary);
+	font-weight: 600;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
 }
 
 .nav-section {
-    display: flex;
-    flex-direction: column;
-    gap: 8px; /* Slightly tighter gap for better fit */
+	display: flex;
+	flex-direction: column;
+	gap: 8px; /* Slightly tighter gap for better fit */
 }
 
 .nav-item {
-    text-decoration: none;
-    padding: 12px;
-    border-radius: 8px;
-    color: #000;
-    transition: 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+	text-decoration: none;
+	padding: 12px;
+	border-radius: 8px;
+	color: #000;
+	transition: 0.2s;
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }
 
 .nav-item.active {
-    background: var(--color-primary);
-    color: white;
+	background: var(--color-primary);
+	color: white;
 }
 
 .nav-item:hover:not(.active) {
-    background: var(--color-primary-subtle);
-    color: var(--color-primary);
+	background: var(--color-primary-subtle);
+	color: var(--color-primary);
 }
 
 .sidebar-bottom {
-    border-top: 1px solid #eee;
-    padding-top: 10px;
+	border-top: 1px solid #eee;
+	padding-top: 10px;
 }
 
 .user-box {
-    background: var(--color-bg-section);
-    padding: 12px;
-    border-radius: 10px;
-    text-align: center;
+	background: var(--color-bg-section);
+	padding: 12px;
+	border-radius: 10px;
+	text-align: center;
 }
 
 .main {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background: var(--color-bg-page);
+	flex: 1;
+	padding: 20px;
+	overflow-y: auto;
+	background: var(--color-bg-page);
+}
+
+.logout-item {
+	margin-top: 5px;
+	color: #d32f2f !important; /* Red color for logout */
+}
+
+.logout-item:hover {
+	background-color: #ffebee !important;
+	/* Light red background on hover */
 }

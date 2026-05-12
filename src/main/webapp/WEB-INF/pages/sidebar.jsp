@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="com.SajhaKrishi.model.*"%>
 <jsp:useBean id="api" class="com.SajhaKrishi.constant.ApiConstant"
 	scope="application" />
 <link rel="stylesheet" type="text/css"
@@ -12,6 +13,11 @@
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 <jsp:include page="alert.jsp" />
+<% 
+HttpSession userSession = request.getSession(false);
+            User currentUser = (User) (userSession != null ? userSession.getAttribute(api.USER_SESSION_KEY) : null);
+            pageContext.setAttribute("currentUser", currentUser);
+        %>
 
 <div class="layout">
 	<aside class="sidebar" id="mainSidebar">
@@ -53,6 +59,10 @@
 					<small>Owner Portal</small>
 				</div>
 			</div>
+			<a href="${pageContext.request.contextPath}<%= api.LOGOUT %>" class="nav-item logout-item">
+				<i class="fa-solid fa-right-from-bracket"></i> 
+				<span class="nav-text">Logout</span>
+			</a>
 		</div>
 	</aside>
 

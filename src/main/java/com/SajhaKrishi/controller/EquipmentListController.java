@@ -93,7 +93,7 @@ public class EquipmentListController extends HttpServlet {
 			if (equipment == null) {
 				request.getSession().setAttribute("error", "Equipment not found.");
 				response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT);
-				return;
+				return; 
 			}
 
 			request.setAttribute("equipment", equipment);
