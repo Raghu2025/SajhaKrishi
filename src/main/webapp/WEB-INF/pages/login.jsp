@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="com.SajhaKrishi.constant.*"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="jakarta.servlet.http.HttpSession"%>
 <%@ page import="jakarta.servlet.http.HttpServletRequest"%>
@@ -45,7 +46,11 @@
 			</form>
 			<div class="other-link">
 				<p>
-					Don't have an account? <a href="/register.html">Sign up here</a>
+					<a href="${pageContext.request.contextPath}${ApiConstant.FORGET_PASSWORD}" class="forgot-password-link">Forgot
+						Password?</a>
+				</p>
+				<p>
+					Don't have an account? <a href="${pageContext.request.contextPath}${ApiConstant.REGISTER}">Sign up here</a>
 				</p>
 			</div>
 		</div>

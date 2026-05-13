@@ -18,7 +18,7 @@ import com.SajhaKrishi.model.User;
 /**
  * Servlet implementation class AuthController
  */
-@WebServlet({ ApiConstant.LOGIN, ApiConstant.REGISTER, ApiConstant.LOGOUT })
+@WebServlet({ ApiConstant.LOGIN, ApiConstant.REGISTER, ApiConstant.LOGOUT, ApiConstant.FORGET_PASSWORD })
 public class AuthController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final String[] districtlist = DropdownConstant.DISTRICT;
@@ -46,6 +46,8 @@ public class AuthController extends HttpServlet {
 			this.handleRegisterPage(request, response);
 		} else if (path.equals(ApiConstant.LOGOUT)) {
 			handleLogout(request, response);
+		} else if (path.equals(ApiConstant.FORGET_PASSWORD)) {
+			request.getRequestDispatcher(PageConstant.FORGET_PASSWORD).forward(request, response);
 		}
 	}
 
@@ -70,6 +72,8 @@ public class AuthController extends HttpServlet {
 			handleRegister(request, response);
 		} else if (path.equals(ApiConstant.LOGOUT)) {
 			handleLogout(request, response);
+		} else if (path.equals(ApiConstant.FORGET_PASSWORD)) {
+
 		}
 	}
 
@@ -123,7 +127,8 @@ public class AuthController extends HttpServlet {
 
 	}
 
-	protected void handleLogout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	protected void handleLogout(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
 		// Get the current session (do not create a new one if it doesn't exist)
 		HttpSession session = request.getSession(false);
 
@@ -139,6 +144,10 @@ public class AuthController extends HttpServlet {
 		// You can also add a query parameter like ?logout=true to show a message on the
 		// login page
 		response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
+	}
+
+	protected void handleForgetPassword(HttpServletRequest request, HttpServletResponse response) {
+
 	}
 
 }

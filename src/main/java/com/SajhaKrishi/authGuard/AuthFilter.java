@@ -75,6 +75,6 @@ public class AuthFilter implements Filter {
 		return path.equals(ApiConstant.LOGIN) || path.equals(ApiConstant.REGISTER) || path.equals(ApiConstant.HOME)
 				|| path.equals("/") || path.startsWith(ApiConstant.CSS) || path.startsWith(ApiConstant.JS)
 				|| path.startsWith(ApiConstant.IMAGES) ||  path.startsWith(ApiConstant.UPLOADS) || path.equals(ApiConstant.KISSAN_EQUIPMENT)
-				|| path.equals(ApiConstant.UNAUTHORIZED);
+				|| path.equals(ApiConstant.UNAUTHORIZED) || path.equals(ApiConstant.FORGET_PASSWORD);
 	}
 }
