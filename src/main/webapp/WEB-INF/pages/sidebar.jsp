@@ -13,11 +13,11 @@
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 <jsp:include page="alert.jsp" />
-<% 
+<%
 HttpSession userSession = request.getSession(false);
-            User currentUser = (User) (userSession != null ? userSession.getAttribute(api.USER_SESSION_KEY) : null);
-            pageContext.setAttribute("currentUser", currentUser);
-        %>
+User currentUser = (User) (userSession != null ? userSession.getAttribute(api.USER_SESSION_KEY) : null);
+pageContext.setAttribute("currentUser", currentUser);
+%>
 
 <div class="layout">
 	<aside class="sidebar" id="mainSidebar">
@@ -44,6 +44,16 @@ HttpSession userSession = request.getSession(false);
 					href="${pageContext.request.contextPath}<%= api.OWNER_EQUIPMENT %><%= api.LIST %>"
 					class="nav-item ${selectedNavItem == 'equipment' ? 'active' : ''}">
 					<i class="fa-solid fa-tractor"></i> <span class="nav-text">Equipment</span>
+				</a> <a
+					href="${pageContext.request.contextPath}<%= api.BOOKING %><%= api.SELF_BOOKING %>"
+					class="nav-item ${selectedNavItem == 'selfBookingList' ? 'active' : ''}">
+					<i class="fa fa-paper-plane"></i></i> <span class="nav-text">Self
+						Requested Booking List</span>
+				</a> <a
+					href="${pageContext.request.contextPath}<%= api.BOOKING %><%= api.LIST %>"
+					class="nav-item ${selectedNavItem == 'bookingList' ? 'active' : ''}">
+					<i class="fa fa-clipboard-list"></i> <span class="nav-text">
+						Booking List</span>
 				</a> <a href="#"
 					class="nav-item ${selectedNavItem == 'profile' ? 'active' : ''}">
 					<i class="fa-solid fa-user-gear"></i> <span class="nav-text">Profile</span>
@@ -56,12 +66,13 @@ HttpSession userSession = request.getSession(false);
 				<i class="fa-solid fa-circle-user"></i>
 				<div class="nav-text">
 					<p>Welcome back</p>
-					<small>Owner Portal</small>
+					<p>${not empty currentUser ? currentUser.fullName : ''}</p>
+					<small>${not empty currentUser ? currentUser.email : ''}</small>
 				</div>
 			</div>
-			<a href="${pageContext.request.contextPath}<%= api.LOGOUT %>" class="nav-item logout-item">
-				<i class="fa-solid fa-right-from-bracket"></i> 
-				<span class="nav-text">Logout</span>
+			<a href="${pageContext.request.contextPath}<%= api.LOGOUT %>"
+				class="nav-item logout-item"> <i
+				class="fa-solid fa-right-from-bracket"></i> <span class="nav-text">Logout</span>
 			</a>
 		</div>
 	</aside>
@@ -72,7 +83,7 @@ HttpSession userSession = request.getSession(false);
 </div>
 
 <script>
-    function toggleSidebar() {
-        document.getElementById('mainSidebar').classList.toggle('collapsed');
-    }
+	function toggleSidebar() {
+		document.getElementById('mainSidebar').classList.toggle('collapsed');
+	}
 </script>

@@ -1,6 +1,8 @@
 package com.SajhaKrishi.controller;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -58,7 +60,6 @@ public class EquipmentListController extends HttpServlet {
 		// Call the Dynamic DAO method
 		// This replaces all the priority-based if-else logic
 		List<EquipmentModel> equipmentList = equipmentDao.searchEquipment(category, district, keyword);
-		System.out.print(equipmentList.toArray().length > 0 ? equipmentList.toArray()[0].toString() : "No Data");
 
 		// Set attributes for the View
 		request.setAttribute("equipmentList", equipmentList);
@@ -95,6 +96,9 @@ public class EquipmentListController extends HttpServlet {
 				response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT);
 				return; 
 			}
+			String detailPath = ApiConstant.KISSAN_EQUIPMENT + ApiConstant.DETAIL + "?id=" + id;
+			String encodedReturnUrl = URLEncoder.encode(detailPath, StandardCharsets.UTF_8);
+			request.setAttribute("encodedReturnUrl", encodedReturnUrl);
 
 			request.setAttribute("equipment", equipment);
 			request.getRequestDispatcher(PageConstant.EQUIPMENT_DETAIL).forward(request, response);

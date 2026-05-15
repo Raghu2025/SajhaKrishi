@@ -162,8 +162,6 @@ public class EquipmentController extends HttpServlet {
 			equipment.setPricePerHour(ValidationUtil.parseDouble(request.getParameter("pricePerHour")));
 			equipment.setDepositAmount(ValidationUtil.parseDouble(request.getParameter("depositAmount")));
 			equipment.setAvailabilityStatus(request.getParameter("availabilityStatus"));
-			equipment.setAvailableFrom(request.getParameter("availableFrom"));
-			equipment.setAvailableTo(request.getParameter("availableTo"));
 			equipment.setDistrict(request.getParameter("district"));
 			equipment.setMunicipality(request.getParameter("municipality"));
 			equipment.setAddress(request.getParameter("address"));

@@ -22,9 +22,11 @@ public class BookingDao {
 		}
 	}
 
-	// ════════════════════════════
-	// CREATE
-	// ════════════════════════════
+	/**
+	 * 
+	 * @param booking
+	 * @return
+	 */
 	public boolean addBooking(BookingModel booking) {
 		String query = "INSERT INTO bookings (equipment_id, kisan_id, owner_id, start_date, end_date, "
 				+ "total_days, price_per_day, total_price, deposit_amount, "
@@ -90,9 +92,11 @@ public class BookingDao {
 		return null;
 	}
 
-	// ════════════════════════════
-	// READ — All (Admin)
-	// ════════════════════════════
+	/**
+	 * Get All Booking
+	 * 
+	 * @return
+	 */
 	public List<BookingModel> getAllBookings() {
 		List<BookingModel> bookingList = new ArrayList<>();
 		String query = "SELECT * FROM bookings WHERE status_flag = 'A' ORDER BY booked_at DESC";
@@ -110,16 +114,52 @@ public class BookingDao {
 		return bookingList;
 	}
 
-	// ════════════════════════════
-	// READ — By Kisan
-	// ════════════════════════════
-	public List<BookingModel> getBookingsByKisan(int kisanId) {
+	/**
+	 * By Kissan
+	 * 
+	 * @param kisanId
+	 * @param status
+	 * @return
+	 */
+	public List<BookingModel> getBookingsByKisan(int kisanId, String status) {
 		List<BookingModel> bookingList = new ArrayList<>();
-		String query = "SELECT * FROM bookings WHERE kisan_id = ? AND status_flag = 'A' ORDER BY booked_at DESC";
+		String query;
+		
+		// Build query based on whether status is provided
+		if (status == null || status.isEmpty()) {
+		    query = """
+		        SELECT b.*, 
+		               e.name AS equipment_name, 
+		               e.image_path,
+		               e.price_per_day,
+		               c.name AS category_name
+		        FROM bookings b
+		        JOIN equipment e ON b.equipment_id = e.id
+		        JOIN category c ON e.category_id = c.id
+		        WHERE b.kisan_id = ? AND b.status = 'A'
+		        ORDER BY b.booked_at DESC
+		    """;
+		} else {
+		    query = """
+		        SELECT b.*, 
+		               e.name AS equipment_name, 
+		               e.image_path,
+		               e.price_per_day,
+		               c.name AS category_name
+		        FROM bookings b
+		        JOIN equipment e ON b.equipment_id = e.id
+		        JOIN category c ON e.category_id = c.id
+		        WHERE b.kisan_id = ? AND b.status_flag = ? AND b.status = 'A'
+		        ORDER BY b.booked_at DESC
+		    """;
+		}
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
 			pstmt.setInt(1, kisanId);
+			if (status != null && !status.isEmpty()) {
+				pstmt.setString(2, status);
+			}
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
@@ -132,16 +172,52 @@ public class BookingDao {
 		return bookingList;
 	}
 
-	// ════════════════════════════
-	// READ — By Owner
-	// ════════════════════════════
-	public List<BookingModel> getBookingsByOwner(int ownerId) {
+	/**
+	 * By Owner
+	 * 
+	 * @param ownerId
+	 * @param status
+	 * @return
+	 */
+	public List<BookingModel> getBookingsByOwner(int ownerId, String status) {
 		List<BookingModel> bookingList = new ArrayList<>();
-		String query = "SELECT * FROM bookings WHERE owner_id = ? AND status_flag = 'A' ORDER BY booked_at DESC";
+		String query;
+		
+		// Build query based on whether status is provided
+		if (status == null || status.isEmpty()) {
+		    query = """
+		        SELECT b.*, 
+		               e.name AS equipment_name, 
+		               e.image_path,
+		               e.price_per_day,
+		               c.name AS category_name
+		        FROM bookings b
+		        JOIN equipment e ON b.equipment_id = e.id
+		        JOIN category c ON e.category_id = c.id
+		        WHERE b.owner_id = ? AND b.status = 'A'
+		        ORDER BY b.booked_at DESC
+		    """;
+		} else {
+		    query = """
+		        SELECT b.*, 
+		               e.name AS equipment_name, 
+		               e.image_path,
+		               e.price_per_day,
+		               c.name AS category_name
+		        FROM bookings b
+		        JOIN equipment e ON b.equipment_id = e.id
+		        JOIN category c ON e.category_id = c.id
+		        WHERE b.owner_id = ? AND b.status_flag = ? AND b.status = 'A'
+		        ORDER BY b.booked_at DESC
+		    """;
+		}
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
 			pstmt.setInt(1, ownerId);
+			if (status != null && !status.isEmpty()) {
+				pstmt.setString(2, status);
+			}
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
@@ -151,6 +227,7 @@ public class BookingDao {
 		} catch (SQLException e) {
 			System.err.println("Error fetching bookings by owner: " + e.getMessage());
 		}
+		System.out.println("Bookings found: " + bookingList.size());
 		return bookingList;
 	}
 
@@ -198,13 +275,17 @@ public class BookingDao {
 		return bookingList;
 	}
 
-	// ════════════════════════════
-	// CHECK — Date Conflict
-	// Prevents double booking
-	// ════════════════════════════
+
+	/**
+	 * 
+	 * @param equipmentId
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
 	public boolean isEquipmentAvailable(int equipmentId, String startDate, String endDate) {
-		String query = "SELECT COUNT(*) FROM bookings WHERE equipment_id = ? " + "AND status NOT IN ('Cancelled') "
-				+ "AND status_flag = 'A' " + "AND (start_date <= ? AND end_date >= ?)";
+		String query = "SELECT COUNT(*) FROM bookings WHERE equipment_id = ? " + "AND status_flag NOT IN ('CANCELLED') "
+				+ "AND status = 'A' " + "AND (start_date <= ? AND end_date >= ?)";
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -222,7 +303,6 @@ public class BookingDao {
 		}
 		return false;
 	}
-
 
 	/**
 	 * 
@@ -246,9 +326,9 @@ public class BookingDao {
 		}
 	}
 
-
 	/**
 	 * UpdatePaymentStatus
+	 * 
 	 * @param id
 	 * @param paymentStatus
 	 * @return
@@ -269,9 +349,9 @@ public class BookingDao {
 		}
 	}
 
-
 	/**
 	 * Cancel Booking
+	 * 
 	 * @param id
 	 * @return
 	 */
@@ -299,6 +379,9 @@ public class BookingDao {
 	private BookingModel mapResultSetToBooking(ResultSet rs) throws SQLException {
 		BookingModel booking = new BookingModel(rs.getInt("id"));
 		booking.setEquipmentId(rs.getInt("equipment_id"));
+		booking.setEquipmentName(rs.getString("equipment_name"));
+		booking.setImagePath(rs.getString("image_path"));
+		booking.setCategoryName(rs.getString("category_name"));
 		booking.setKisanId(rs.getInt("kisan_id"));
 		booking.setOwnerId(rs.getInt("owner_id"));
 		booking.setStartDate(rs.getString("start_date"));
@@ -308,6 +391,7 @@ public class BookingDao {
 		booking.setTotalPrice(rs.getDouble("total_price"));
 		booking.setDepositAmount(rs.getDouble("deposit_amount"));
 		booking.setStatus(rs.getString("status"));
+		booking.setStatusFlag(rs.getString("status_flag"));
 		booking.setPaymentStatus(rs.getString("payment_status"));
 		booking.setPickupAddress(rs.getString("pickup_address"));
 		booking.setNotes(rs.getString("notes"));

@@ -82,7 +82,7 @@
 						placeholder="NPR 0" required>
 				</div>
 
-				<div class="form-row">
+<%-- 				<div class="form-row">
 					<div class="form-group">
 						<label>Available From</label> <input type="date"
 							name="availableFrom" value="${equipment.availableFrom}" required>
@@ -92,7 +92,7 @@
 							value="${equipment.availableTo}" required>
 					</div>
 				</div>
-
+ --%>
 				<div class="form-row">
 					<div class="form-group">
 						<label>District</label> <select name="district" required>

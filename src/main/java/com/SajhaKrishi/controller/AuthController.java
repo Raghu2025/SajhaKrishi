@@ -41,6 +41,8 @@ public class AuthController extends HttpServlet {
 		String path = request.getServletPath();
 		// Routing based on servlet path
 		if (path.equals(ApiConstant.LOGIN)) {
+			String returnUrl = request.getParameter("returnUrl");
+			request.setAttribute("returnUrl", returnUrl);
 			request.getRequestDispatcher(PageConstant.LOGIN_PAGE).forward(request, response);
 		} else if (path.equals(ApiConstant.REGISTER)) {
 			this.handleRegisterPage(request, response);
@@ -64,7 +66,6 @@ public class AuthController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String path = request.getServletPath();
-		System.out.println(path);
 		if (path.equals(ApiConstant.LOGIN)) {
 			System.out.println("ogin");
 			handleLogin(request, response);
@@ -82,26 +83,27 @@ public class AuthController extends HttpServlet {
 
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
-
+		String returnUrl = request.getParameter("returnUrl"); // ← grab it
 		User user = userDao.validateUser(email, password);
 
 		if (user != null) {
-			// Safe to access user now
-
-			// Create session
 			HttpSession session = request.getSession();
 			session.setAttribute("user", user);
 
-			// Create cookie
 			Cookie userCookie = new Cookie("user_id", String.valueOf(user.getId()));
-			userCookie.setMaxAge(60 * 60 * 24); // 24 hours
+			userCookie.setMaxAge(60 * 60 * 24);
 			response.addCookie(userCookie);
-
-			// Redirect
-			response.sendRedirect(request.getContextPath() + ApiConstant.DASHBOARD);
+			
+			// Redirect to returnUrl if present and safe, otherwise dashboard
+			if (returnUrl != null && !returnUrl.isBlank() && returnUrl.startsWith("/")) {
+				response.sendRedirect(request.getContextPath() + returnUrl);
+			} else {
+				response.sendRedirect(request.getContextPath() + ApiConstant.DASHBOARD);
+			}
 
 		} else {
-			request.setAttribute("error", "Invalid username or password.");
+			request.setAttribute("error", "Invalid email or password.");
+			request.setAttribute("returnUrl", returnUrl); // ← pass it back to form
 			request.getRequestDispatcher(PageConstant.LOGIN_PAGE).forward(request, response);
 		}
 	}

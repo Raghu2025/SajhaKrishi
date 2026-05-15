@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="com.SajhaKrishi.constant.*"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,21 +22,22 @@
 			<!-- FILTER SECTION -->
 			<div class="filter-section">
 				<div class="filter-group">
-					<button class="filter-btn active" data-filter="all">
-						<i class="fa fa-list"></i> All Bookings
-					</button>
-					<button class="filter-btn" data-filter="Pending">
+					<a href="?type=${currentType}"
+						class="btn-tab ${empty currentStatus ? 'active' : ''}"> <i
+						class="fa fa-list"></i> All
+					</a> <a href="?type=${currentType}&status=PENDING"
+						class="btn-tab ${currentStatus == 'PENDING' ? 'active' : ''}">
 						<i class="fa fa-hourglass-half"></i> Pending
-					</button>
-					<button class="filter-btn" data-filter="Confirmed">
+					</a> <a href="?type=${currentType}&status=CONFIRMED"
+						class="btn-tab ${currentStatus == 'CONFIRMED' ? 'active' : ''}">
 						<i class="fa fa-check-circle"></i> Confirmed
-					</button>
-					<button class="filter-btn" data-filter="Completed">
-						<i class="fa fa-checkmark"></i> Completed
-					</button>
-					<button class="filter-btn" data-filter="Cancelled">
+					</a> <a href="?type=${currentType}&status=COMPLETED"
+						class="btn-tab ${currentStatus == 'COMPLETED' ? 'active' : ''}">
+						<i class="fa fa-check"></i> Completed
+					</a> <a href="?type=${currentType}&status=CANCELLED"
+						class="btn-tab ${currentStatus == 'CANCELLED' ? 'active' : ''}">
 						<i class="fa fa-times-circle"></i> Cancelled
-					</button>
+					</a>
 				</div>
 			</div>
 
@@ -47,11 +49,12 @@
 							<i class="fa fa-inbox"></i>
 						</div>
 						<h3>No Bookings Yet</h3>
-						<p>You haven't made any bookings. Browse available equipment to
-							get started!</p>
-						<a href="${pageContext.request.contextPath}/kisan/equipment/list"
-							class="btn btn-primary">
-							<i class="fa fa-search"></i> Browse Equipment
+						<p>You haven't made any bookings. Browse available equipment
+							to get started!</p>
+						<a
+							href="${pageContext.request.contextPath}${ApiConstant.KISSAN_EQUIPMENT}"
+							class="btn btn-primary"> <i class="fa fa-search"></i> Browse
+							Equipment
 						</a>
 					</div>
 				</c:if>
@@ -74,74 +77,92 @@
 							<tbody>
 								<c:forEach var="booking" items="${bookingList}">
 									<tr class="booking-row" data-status="${booking.status}">
-										<td class="booking-id">
-											<span class="badge">#${booking.id}</span>
+										<td class="booking-id"><span class="badge">#${booking.id}</span>
 										</td>
-										<td class="equipment-name">Equipment ${booking.equipmentId}</td>
+										<td class="equipment-name">${booking.equipmentName}</td>
 										<td class="dates">
 											<div class="date-range">
-												<i class="fa fa-calendar-days"></i> ${booking.startDate}
-												<br> <i class="fa fa-calendar-check"></i>
-												${booking.endDate}
+												<div>
+													<i class="fa fa-calendar-days"></i> ${booking.startDate}
+												</div>
+												<div>
+													<i class="fa fa-calendar-check"></i> ${booking.endDate}
+												</div>
+
 											</div>
 										</td>
-										<td class="duration">
-											<span class="duration-badge">${booking.totalDays} days</span>
-										</td>
-										<td class="price">
-											<strong>Rs. ${booking.totalPrice}</strong>
-										</td>
-										<td class="status">
-											<span
-												class="status-pill ${booking.status.toLowerCase()}">
+										<td class="duration"><span class="duration-badge">${booking.totalDays}
+												days</span></td>
+										<td class="price"><strong>Rs.
+												${booking.totalPrice}</strong></td>
+										<td class="status"><span
+											class="status-pill ${not empty booking.statusFlag ? booking.statusFlag.toLowerCase() : ''}">
 												<c:choose>
-													<c:when test="${booking.status == 'Pending'}">
-														<i class="fa fa-hourglass-half"></i> ${booking.status}
-													</c:when>
-													<c:when test="${booking.status == 'Confirmed'}">
-														<i class="fa fa-check-circle"></i> ${booking.status}
-													</c:when>
-													<c:when test="${booking.status == 'Completed'}">
-														<i class="fa fa-checkmark"></i> ${booking.status}
-													</c:when>
-													<c:when test="${booking.status == 'Cancelled'}">
-														<i class="fa fa-times-circle"></i> ${booking.status}
-													</c:when>
+													<c:when test="${booking.statusFlag == 'PENDING'}">
+														<i class="fa fa-hourglass-half"></i> Pending
+            </c:when>
+													<c:when test="${booking.statusFlag == 'CONFIRMED'}">
+														<i class="fa fa-check-circle"></i> Confirmed
+            </c:when>
+													<c:when test="${booking.statusFlag == 'COMPLETED'}">
+														<i class="fa fa-check-circle"></i> Completed
+            </c:when>
+													<c:when test="${booking.statusFlag == 'CANCELLED'}">
+														<i class="fa fa-times-circle"></i> Cancelled
+            </c:when>
 													<c:otherwise>
-														<i class="fa fa-info-circle"></i> ${booking.status}
-													</c:otherwise>
+														<i class="fa fa-info-circle"></i> ${booking.statusFlag}
+            </c:otherwise>
 												</c:choose>
-											</span>
-										</td>
-										<td class="payment-status">
-											<span
-												class="payment-badge ${booking.paymentStatus.toLowerCase()}">
+										</span></td>
+										<td class="payment-status"><span
+											class="payment-badge ${booking.paymentStatus.toLowerCase()}">
 												<c:choose>
-													<c:when test="${booking.paymentStatus == 'Paid'}">
+													<c:when test="${booking.paymentStatus == 'PAID'}">
 														<i class="fa fa-credit-card"></i> ${booking.paymentStatus}
 													</c:when>
-													<c:when test="${booking.paymentStatus == 'Unpaid'}">
+													<c:when test="${booking.paymentStatus == 'UNPAID'}">
 														<i class="fa fa-circle-xmark"></i> ${booking.paymentStatus}
 													</c:when>
 													<c:otherwise>
 														<i class="fa fa-undo"></i> ${booking.paymentStatus}
 													</c:otherwise>
 												</c:choose>
-											</span>
-										</td>
+										</span></td>
 										<td class="actions">
 											<div class="action-buttons">
+												<%-- View button (always) --%>
 												<button
 													onclick="location.href='${pageContext.request.contextPath}/booking/details?id=${booking.id}'"
-													class="btn btn-outline btn-sm" title="View Details">
+													class="btn btn-outline btn-sm">
 													<i class="fa fa-eye"></i> View
 												</button>
-												<c:if test="${booking.status != 'Cancelled' && booking.status != 'Completed'}">
-													<button
-														onclick="cancelBooking(${booking.id})"
-														class="btn btn-danger btn-sm" title="Cancel Booking">
+
+												<%-- PENDING: can Confirm or Cancel --%>
+												<c:if test="${booking.statusFlag == 'PENDING'}">
+													<c:if test="${currentType == 'owner'}">
+														<button onclick="updateStatus(${booking.id}, 'CONFIRMED')"
+															class="btn btn-primary btn-sm">
+															<i class="fa fa-check"></i> Confirm
+														</button>
+													</c:if>
+													<button onclick="updateStatus(${booking.id}, 'CANCELLED')"
+														class="btn btn-danger btn-sm">
 														<i class="fa fa-times"></i> Cancel
 													</button>
+												</c:if>
+
+												<c:if test="${booking.statusFlag == 'CONFIRMED'}">
+													<c:if test="${currentType == 'owner'}">
+														<button onclick="updateStatus(${booking.id}, 'COMPLETED')"
+															class="btn btn-primary btn-sm">
+															<i class="fa fa-check-circle"></i> Complete
+														</button>
+														<button onclick="updateStatus(${booking.id}, 'CANCELLED')"
+															class="btn btn-danger btn-sm">
+															<i class="fa fa-times"></i> Cancel
+														</button>
+													</c:if>
 												</c:if>
 											</div>
 										</td>

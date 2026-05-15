@@ -11,7 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import com.SajhaKrishi.constant.ApiConstant;
+import com.SajhaKrishi.constant.BookingStatus;
 import com.SajhaKrishi.constant.PageConstant;
+import com.SajhaKrishi.constant.PaymentStatus;
 import com.SajhaKrishi.dao.BookingDao;
 import com.SajhaKrishi.dao.EquipmentDao;
 import com.SajhaKrishi.model.BookingModel;
@@ -35,36 +37,33 @@ public class BookingController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		String pathInfo = request.getPathInfo();
 
 		if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals(ApiConstant.LIST)) {
+			request.setAttribute("selectedNavItem", "bookingList");
+			handleList(request, response);
+
+		} else if (pathInfo.equals(ApiConstant.SELF_BOOKING)) {
+			request.setAttribute("selectedNavItem", "selfBookingList");
+			request.setAttribute("type",  "mine");
 			handleList(request, response);
 
 		} else if (pathInfo.equals(ApiConstant.DETAIL)) {
+			request.setAttribute("type",  "owner");
 			handleDetail(request, response);
 
 		} else if (pathInfo.equals(ApiConstant.DELETE)) {
 			handleCancel(request, response);
 
 		} else {
-			response.sendRedirect(request.getContextPath() + "/booking/list");
+			response.sendRedirect(request.getContextPath() + ApiConstant.BOOKING + ApiConstant.LIST);
 		}
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
-		String action = request.getParameter("action");
-
-		if (action != null && action.equals("create")) {
-			handleCreateBooking(request, response);
-		} else if (action != null && action.equals("updateStatus")) {
-			handleUpdateStatus(request, response);
-		} else {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
-		}
+		handleCreateBooking(request, response);
 	}
 
 	/**
@@ -77,30 +76,41 @@ public class BookingController extends HttpServlet {
 	 * @throws IOException
 	 */
 	private void handleList(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	        throws ServletException, IOException {
 
-		HttpSession session = request.getSession(false);
-		if (session == null) {
-			response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
-			return;
-		}
+	    HttpSession session = request.getSession(false);
+	    if (session == null) {
+	        response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
+	        return;
+	    }
 
-		User user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
-		if (user == null) {
-			response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
-			return;
-		}
+	    User user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
+	    if (user == null) {
+	        response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
+	        return;
+	    }
 
-		List<BookingModel> bookingList;
+	    // "mine"  = bookings I made as a farmer (kisan)
+	    // "owner" = booking requests on my equipment (default)
+	    String type   = request.getAttribute("type") != null 
+	              ? (String) request.getAttribute("type") 
+	                      : request.getParameter("type");
+	    String status = request.getParameter("status");
+	    if (type == null || type.isBlank()) type = "owner";
 
-		// TODO: Check user role to determine which bookings to fetch
-		// For now, assuming we fetch based on user ID being owner or kisan
-		bookingList = bookingDao.getBookingsByOwner(user.getId());
+	    List<BookingModel> bookingList;
 
-		request.setAttribute("bookingList", bookingList);
-		request.setAttribute("selectedNavItem", "bookings");
-		request.setAttribute("contentPage", PageConstant.BOOKING_LIST);
-		request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
+	    if (type.equals("mine")) {
+	        bookingList = bookingDao.getBookingsByKisan(user.getId(), status);
+	    } else {
+	        bookingList = bookingDao.getBookingsByOwner(user.getId(), status);
+	    }
+
+	    request.setAttribute("bookingList", bookingList);
+	    request.setAttribute("currentType",   type);
+	    request.setAttribute("currentStatus", status);
+	    request.setAttribute("contentPage",   PageConstant.BOOKING_LIST);
+	    request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
 	}
 
 	/**
@@ -146,17 +156,18 @@ public class BookingController extends HttpServlet {
 	private void handleCreateBooking(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+
 		try {
 			HttpSession session = request.getSession(false);
 			User kisan = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
+			int equipmentId = Integer.parseInt(request.getParameter("equipmentId"));
 
 			if (kisan == null) {
-				response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+				response.sendRedirect(ApiConstant.LOGIN + "?redirectUrl" + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.DETAIL + "?id=" + equipmentId);
 				return;
 			}
 
 			// Extract parameters
-			int equipmentId = Integer.parseInt(request.getParameter("equipmentId"));
 			String startDate = request.getParameter("startDate");
 			String endDate = request.getParameter("endDate");
 			String pickupAddress = request.getParameter("pickupAddress");
@@ -165,7 +176,7 @@ public class BookingController extends HttpServlet {
 			// Validate input
 			if (startDate == null || endDate == null || pickupAddress == null || pickupAddress.trim().isEmpty()) {
 				request.getSession().setAttribute("error", "Missing required fields");
-				response.sendRedirect(request.getContextPath() + "/kisan/equipment/" + equipmentId);
+				response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.DETAIL + "?id=" +equipmentId);
 				return;
 			}
 
@@ -173,14 +184,14 @@ public class BookingController extends HttpServlet {
 			EquipmentModel equipment = equipmentDao.getEquipmentById(equipmentId);
 			if (equipment == null) {
 				request.getSession().setAttribute("error", "Equipment not found");
-				response.sendRedirect(request.getContextPath() + "/kisan/equipment/list");
+				response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.DETAIL + "?id=" +equipmentId);
 				return;
 			}
 
 			// Check availability
 			if (!bookingDao.isEquipmentAvailable(equipmentId, startDate, endDate)) {
 				request.getSession().setAttribute("error", "Equipment is not available for the selected dates");
-				response.sendRedirect(request.getContextPath() + "/kisan/equipment/" + equipmentId);
+				response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.DETAIL + "?id=" +equipmentId);
 				return;
 			}
 
@@ -188,7 +199,7 @@ public class BookingController extends HttpServlet {
 			int totalDays = calculateDays(startDate, endDate);
 			if (totalDays <= 0) {
 				request.getSession().setAttribute("error", "Invalid date range");
-				response.sendRedirect(request.getContextPath() + "/kisan/equipment/" + equipmentId);
+				response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.DETAIL + "?id=" +equipmentId);
 				return;
 			}
 
@@ -205,18 +216,18 @@ public class BookingController extends HttpServlet {
 			booking.setPricePerDay(equipment.getPricePerDay());
 			booking.setTotalPrice(totalPrice);
 			booking.setDepositAmount(equipment.getDepositAmount());
-			booking.setStatus("Pending");
-			booking.setPaymentStatus("Unpaid");
+			booking.setStatusFlag(BookingStatus.PENDING.name());
+			booking.setPaymentStatus(PaymentStatus.UNPAID.name());
 			booking.setPickupAddress(pickupAddress);
 			booking.setNotes(notes != null ? notes : "");
 
 			// Save to database
 			if (bookingDao.addBooking(booking)) {
 				request.getSession().setAttribute("success", "Booking request created successfully!");
-				response.sendRedirect(request.getContextPath() + "/booking/list");
+				response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.DETAIL + "?id=" +equipmentId);
 			} else {
 				request.getSession().setAttribute("error", "Failed to create booking");
-				response.sendRedirect(request.getContextPath() + "/kisan/equipment/" + equipmentId);
+				response.sendRedirect(request.getContextPath() + ApiConstant.KISSAN_EQUIPMENT + ApiConstant.DETAIL + "?id=" +equipmentId);
 			}
 
 		} catch (NumberFormatException e) {
@@ -294,10 +305,6 @@ public class BookingController extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid booking ID");
 		}
 	}
-
-	// ════════════════════════════
-	// HELPER METHODS
-	// ════════════════════════════
 
 	/**
 	 * Calculate total days between two dates (yyyy-MM-dd format)

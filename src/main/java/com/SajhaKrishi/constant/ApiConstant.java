@@ -8,6 +8,7 @@ public class ApiConstant {
 	public static final String KISSAN_EQUIPMENT = "/kisan/equipment";
 	public static final String OWNER_EQUIPMENT = "/owner/equipment";
 	public static final String BOOKING = "/booking";
+	public static final String SELF_BOOKING = "/self";
 	public static final String DASHBOARD = "/dashboard";
 	public static final String ADD = "/add";
 	public static final String EDIT = "/edit";

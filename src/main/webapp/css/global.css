@@ -178,3 +178,37 @@ body {
 .btn-danger:hover {
 	background: #fecaca;
 }
+
+a.btn {
+	text-decoration: none;
+}
+
+
+.btn-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-primary);
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    color: var(--color-text-body);
+    transition: all 0.2s ease;
+}
+
+.btn-tab:hover {
+    background: var(--color-primary-subtle);
+    border-color: var(--color-border-strong);
+    color: var(--color-text-primary);
+}
+
+.btn-tab.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}

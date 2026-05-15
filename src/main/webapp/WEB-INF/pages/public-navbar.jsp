@@ -34,6 +34,8 @@ pageContext.setAttribute("currentUser", currentUser);
 				Works</a> <a href="${pageContext.request.contextPath}/kisan/equipment">Browse</a>
 			<c:choose>
 				<c:when test="${not empty currentUser}">
+					<button class="btn btn-primary"
+						onclick="location.href='${pageContext.request.contextPath}${ApiConstant.DASHBOARD}'">Dashboard</button>
 					<button class="btn btn-outline"
 						onclick="location.href='${pageContext.request.contextPath}/logout'">Logout</button>
 				</c:when>

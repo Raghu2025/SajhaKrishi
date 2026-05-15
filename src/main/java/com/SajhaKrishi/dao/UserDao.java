@@ -63,7 +63,6 @@ public class UserDao {
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 			pstmt.setString(1, email);
 			ResultSet rs = pstmt.executeQuery();
-			System.out.println(email);
 			if (rs.next()) {
 				User user = new User(rs.getInt("id"), rs.getString("full_name"), rs.getString("email"),
 						rs.getString("password"), rs.getString("address"), rs.getString("district"), rs.getInt("role"),

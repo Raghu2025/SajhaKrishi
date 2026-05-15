@@ -32,9 +32,9 @@ public class EquipmentDao {
 	public boolean addEquipment(EquipmentModel equipment) {
 		String query = "INSERT INTO equipment (name, category_id, description, brand, manufacture_year, "
 				+ "price_per_day, price_per_hour, deposit_amount, availability_status, "
-				+ "available_from, available_to, district, municipality, address, "
+				+ "district, municipality, address, "
 				+ "condition_, specifications, fuel_type, image_path, owner_id, status) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		if (conn == null) {
 			System.err.println("Database connection is null");
@@ -52,17 +52,15 @@ public class EquipmentDao {
 			pstmt.setDouble(7, equipment.getPricePerHour());
 			pstmt.setDouble(8, equipment.getDepositAmount());
 			pstmt.setString(9, equipment.getAvailabilityStatus());
-			pstmt.setString(10, equipment.getAvailableFrom());
-			pstmt.setString(11, equipment.getAvailableTo());
-			pstmt.setString(12, equipment.getDistrict());
-			pstmt.setString(13, equipment.getMunicipality());
-			pstmt.setString(14, equipment.getAddress());
-			pstmt.setString(15, equipment.getCondition());
-			pstmt.setString(16, equipment.getSpecifications());
-			pstmt.setString(17, equipment.getFuelType());
-			pstmt.setString(18, equipment.getImagePath());
-			pstmt.setInt(19, equipment.getOwnerId());
-			pstmt.setString(20, equipment.getStatus());
+			pstmt.setString(10, equipment.getDistrict());
+			pstmt.setString(11, equipment.getMunicipality());
+			pstmt.setString(12, equipment.getAddress());
+			pstmt.setString(13, equipment.getCondition());
+			pstmt.setString(14, equipment.getSpecifications());
+			pstmt.setString(15, equipment.getFuelType());
+			pstmt.setString(16, equipment.getImagePath());
+			pstmt.setInt(17, equipment.getOwnerId());
+			pstmt.setString(18, equipment.getStatus());
 
 			int rowsInserted = pstmt.executeUpdate();
 
@@ -266,7 +264,7 @@ public class EquipmentDao {
 		System.out.print("Update");
 		String query = "UPDATE equipment SET name=?, category_id=?, description=?, brand=?, "
 				+ "manufacture_year=?, price_per_day=?, price_per_hour=?, deposit_amount=?, "
-				+ "availability_status=?, available_from=?, available_to=?, district=?, "
+				+ "availability_status=?, district=?, "
 				+ "municipality=?, address=?, condition_=?, specifications=?, "
 				+ "fuel_type=?, image_path=? WHERE id=?";
 
@@ -281,15 +279,13 @@ public class EquipmentDao {
 			pstmt.setDouble(7, equipment.getPricePerHour());
 			pstmt.setDouble(8, equipment.getDepositAmount());
 			pstmt.setString(9, equipment.getAvailabilityStatus());
-			pstmt.setString(10, equipment.getAvailableFrom());
-			pstmt.setString(11, equipment.getAvailableTo());
-			pstmt.setString(12, equipment.getDistrict());
-			pstmt.setString(13, equipment.getMunicipality());
-			pstmt.setString(14, equipment.getAddress());
-			pstmt.setString(15, equipment.getCondition());
-			pstmt.setString(16, equipment.getSpecifications());
-			pstmt.setString(17, equipment.getFuelType());
-			pstmt.setString(18, equipment.getImagePath());
+			pstmt.setString(10, equipment.getDistrict());
+			pstmt.setString(11, equipment.getMunicipality());
+			pstmt.setString(12, equipment.getAddress());
+			pstmt.setString(13, equipment.getCondition());
+			pstmt.setString(14, equipment.getSpecifications());
+			pstmt.setString(15, equipment.getFuelType());
+			pstmt.setString(16, equipment.getImagePath());
 
 			// The WHERE clause ID
 			pstmt.setInt(19, equipment.getId());
@@ -365,8 +361,6 @@ public class EquipmentDao {
 		equipment.setPricePerHour(rs.getDouble("price_per_hour"));
 		equipment.setDepositAmount(rs.getDouble("deposit_amount"));
 		equipment.setAvailabilityStatus(rs.getString("availability_status"));
-		equipment.setAvailableFrom(rs.getString("available_from"));
-		equipment.setAvailableTo(rs.getString("available_to"));
 		equipment.setDistrict(rs.getString("district"));
 		equipment.setMunicipality(rs.getString("municipality"));
 		equipment.setAddress(rs.getString("address"));

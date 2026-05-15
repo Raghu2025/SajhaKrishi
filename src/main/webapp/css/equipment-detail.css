@@ -23,6 +23,12 @@ body {
   padding: 0.65rem 0;
 }
 
+
+.main-wrapper {
+	max-height: 90dvh;
+	overflow-y: auto;
+}
+
 .breadcrumb-bar .container {
   display: flex;
   align-items: center;
@@ -45,12 +51,6 @@ body {
 .breadcrumb-sep    { color: var(--color-border-strong); }
 .breadcrumb-cat    { color: var(--color-text-body); }
 .breadcrumb-current { color: var(--color-text-primary); font-weight: 500; }
-
-.main-wrapper {
-	width: 100%;
-	max-height: 80dvh;
-	overflow-y: auto; 
-}
 
 /* ─── MAIN GRID ───────────────────────────────────────────── */
 .main-grid {
@@ -253,7 +253,7 @@ body {
 /* ─── BOOKING CARD ────────────────────────────────────────── */
 .right-col {
   position: sticky;
-  top: 80px;
+  top: 40px;
 }
 
 .booking-card {
@@ -348,7 +348,7 @@ body {
 
 /* neutralise global .form-group margin inside the card */
 .booking-card .form-group {
-  margin-bottom: 0;
+  margin-bottom: 0.8rem;
 }
 
 .booking-card .form-group input[type="date"] {
@@ -477,6 +477,111 @@ body {
   display: block;
   color: var(--color-text-muted);
   font-size: 0.72rem;
+}
+
+/* ─── FLASH MESSAGES ─────────────────────────────────────── */
+.flash {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 1.5rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  position: relative;
+}
+
+.flash-error {
+  background: #fee2e2;
+  border-bottom: 1px solid #fca5a5;
+  color: #b91c1c;
+}
+
+.flash-success {
+  background: var(--color-primary-subtle);
+  border-bottom: 1px solid var(--color-primary-light);
+  color: var(--color-available-text);
+}
+
+.flash i { font-size: 1rem; flex-shrink: 0; }
+
+.flash span { flex: 1; }
+
+.flash-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 0.9rem;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s;
+}
+.flash-close:hover { opacity: 1; }
+
+/* ─── INLINE FORM ERROR BOX ───────────────────────────────── */
+.form-error-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  margin-bottom: 1rem;
+}
+.form-error-box i { margin-top: 2px; flex-shrink: 0; }
+
+/* ─── TEXTAREA ────────────────────────────────────────────── */
+.booking-card textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: var(--color-bg-page);
+  resize: vertical;
+  min-height: 64px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+.booking-card textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(45, 80, 22, 0.10);
+}
+.booking-card textarea::placeholder { color: #aaa; }
+
+/* ─── LABEL OPTIONAL HINT ─────────────────────────────────── */
+.label-optional {
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-left: 3px;
+}
+
+/* ─── LOGIN PROMPT (shown when not logged in) ─────────────── */
+.login-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: var(--color-bg-page);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.2rem;
+  color: var(--color-text-muted);
+}
+.login-prompt i { color: var(--color-primary); opacity: 0.5; }
+.login-prompt p { font-size: var(--font-size-sm); margin: 0; }
+
+.form-group {
+	margin-bottom: 20px;
 }
 
 /* ─── RESPONSIVE ──────────────────────────────────────────── */

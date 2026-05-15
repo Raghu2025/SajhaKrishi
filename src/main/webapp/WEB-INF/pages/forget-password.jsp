@@ -52,22 +52,6 @@
 					</div>
 				</form>
 
-				<div class="form-divider">
-					<span>or</span>
-				</div>
-
-				<form id="usernameForm" action="/forgotPassword" method="post">
-					<input type="hidden" name="step" value="1" />
-					<div class="form-group">
-						<label for="username">Username</label>
-						<input type="text" id="username" placeholder="Enter your username"
-							name="username" />
-					</div>
-
-					<div class="button-wrapper">
-						<button type="submit" class="btn-secondary">Search by Username</button>
-					</div>
-				</form>
 			</div>
 
 			<!-- STEP 2: OTP Verification -->
@@ -127,12 +111,12 @@
 						<input type="password" id="newPassword"
 							placeholder="Enter new password" name="newPassword" required />
 						<div class="password-strength">
-							<div class="strength-bar"></div>
-							<span class="strength-text">Strength: Weak</span>
+			<!-- 				<div class="strength-bar"></div>
+							<span class="strength-text">Strength: Weak</span> -->
 						</div>
-						<p class="password-hint">Password must be at least 8 characters
+				<!-- 		<p class="password-hint">Password must be at least 8 characters
 							with uppercase, lowercase, and numbers</p>
-						<span class="input-error">Password requirements not met</span>
+						<span class="input-error">Password requirements not met</span> -->
 					</div>
 
 					<div class="form-group">
@@ -179,7 +163,8 @@
 		// Resend OTP Timer
 		let resendTimer = 60;
 		const resendBtn = document.getElementById('resendBtn');
-
+		document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+		document.getElementById('step3').classList.add('active');
 		function startResendTimer() {
 			resendTimer = 60;
 			resendBtn.disabled = true;

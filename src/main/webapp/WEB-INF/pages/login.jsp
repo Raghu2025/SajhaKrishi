@@ -28,6 +28,7 @@
 				</c:if>
 			</div>
 			<form action="login" method="post">
+			<input type="hidden" name="returnUrl" value="${returnUrl}" />
 				<div class="form-group">
 					<label for="email">Email Address</label> <input type="email"
 						placeholder="Email" name="email" required /> <span
