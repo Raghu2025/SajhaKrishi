@@ -82,13 +82,28 @@ public class EquipmentController extends HttpServlet {
 	 * @throws IOException
 	 */
 	private void handleList(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		User user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
-		request.setAttribute("equipmentList", equipmentDao.getEquipmentByOwner(user.getId()));
-		request.setAttribute("selectedNavItem", "equipment");
-		request.setAttribute("contentPage", PageConstant.EQUIPMENT_LIST);
-		request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
+	        throws ServletException, IOException {
+
+	    HttpSession session = request.getSession(false);
+	    User user = (User) session.getAttribute(ApiConstant.USER_SESSION_KEY);
+
+	    boolean isAdmin = user.getRoleId() == 1;
+
+	    List<EquipmentModel> equipmentList;
+
+	    if (isAdmin) {
+	        // Admin sees all equipment
+	        equipmentList = equipmentDao.getAllEquipment();
+	    } else {
+	        // Owner sees only their equipment
+	        equipmentList = equipmentDao.getEquipmentByOwner(user.getId());
+	    }
+
+	    request.setAttribute("equipmentList",  equipmentList);
+	    request.setAttribute("isAdmin",        isAdmin);
+	    request.setAttribute("selectedNavItem", "equipment");
+	    request.setAttribute("contentPage",    PageConstant.EQUIPMENT_LIST);
+	    request.getRequestDispatcher(PageConstant.LAYOUT).forward(request, response);
 	}
 
 	/**

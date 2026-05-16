@@ -109,8 +109,8 @@ public class EquipmentDao {
 	 */
 	public List<EquipmentModel> getAllEquipment() {
 		List<EquipmentModel> equipmentList = new ArrayList<>();
-		String query = "SELECT e.*, c.category_name " + "FROM equipment e "
-				+ "LEFT JOIN categories c ON e.category_id = c.id " + "WHERE e.status = 'A'";
+		String query = "SELECT e.*, c.name as category_name " + "FROM equipment e "
+				+ "LEFT JOIN category c ON e.category_id = c.id " + "WHERE e.status = 'A'";
 
 		try (Connection conn = DBConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(query);

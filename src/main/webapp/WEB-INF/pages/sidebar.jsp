@@ -28,13 +28,15 @@ pageContext.setAttribute("currentUser", currentUser);
 					<i class="fa-solid fa-bars"></i>
 				</button>
 			</div>
+			<c:if test="${not empty currentUser and currentUser.roleId != 1}">
+				<button
+					onclick="location.href='${pageContext.request.contextPath}<%= api.OWNER_EQUIPMENT %><%= api.ADD %>'"
+					class="new-btn">
+					<i class="fa-solid fa-plus"></i> <span class="nav-text">New
+						Equipment</span>
+				</button>
+			</c:if>
 
-			<button
-				onclick="location.href='${pageContext.request.contextPath}<%= api.OWNER_EQUIPMENT %><%= api.ADD %>'"
-				class="new-btn">
-				<i class="fa-solid fa-plus"></i> <span class="nav-text">New
-					Equipment</span>
-			</button>
 
 			<div class="nav-section">
 				<a href="${pageContext.request.contextPath}<%= api.DASHBOARD %>"
@@ -44,12 +46,16 @@ pageContext.setAttribute("currentUser", currentUser);
 					href="${pageContext.request.contextPath}<%= api.OWNER_EQUIPMENT %><%= api.LIST %>"
 					class="nav-item ${selectedNavItem == 'equipment' ? 'active' : ''}">
 					<i class="fa-solid fa-tractor"></i> <span class="nav-text">Equipment</span>
-				</a> <a
-					href="${pageContext.request.contextPath}<%= api.BOOKING %><%= api.SELF_BOOKING %>"
-					class="nav-item ${selectedNavItem == 'selfBookingList' ? 'active' : ''}">
-					<i class="fa fa-paper-plane"></i></i> <span class="nav-text">Self
-						Requested Booking List</span>
-				</a> <a
+				</a>
+				<c:if test="${not empty currentUser and currentUser.roleId != 1}">
+					<a
+						href="${pageContext.request.contextPath}<%= api.BOOKING %><%= api.SELF_BOOKING %>"
+						class="nav-item ${selectedNavItem == 'selfBookingList' ? 'active' : ''}">
+						<i class="fa fa-paper-plane"></i></i> <span class="nav-text">Self
+							Requested Booking List</span>
+					</a>
+				</c:if>
+				<a
 					href="${pageContext.request.contextPath}<%= api.BOOKING %><%= api.LIST %>"
 					class="nav-item ${selectedNavItem == 'bookingList' ? 'active' : ''}">
 					<i class="fa fa-clipboard-list"></i> <span class="nav-text">
@@ -59,6 +65,11 @@ pageContext.setAttribute("currentUser", currentUser);
 					<a href="${pageContext.request.contextPath}<%= api.ADMIN_USERS %>"
 						class="nav-item ${selectedNavItem == 'user' ? 'active' : ''}">
 						<i class="fa-solid fa-user"></i> <span class="nav-text">User</span>
+					</a>
+					<a
+						href="${pageContext.request.contextPath}<%= api.ADMIN_CATEGORY %><%= api.LIST %>"
+						class="nav-item ${selectedNavItem == 'category' ? 'active' : ''}">
+						<i class="fa-solid fa-list"></i> <span class="nav-text">Categories</span>
 					</a>
 				</c:if>
 

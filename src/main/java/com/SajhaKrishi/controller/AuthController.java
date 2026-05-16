@@ -124,19 +124,20 @@ public class AuthController extends HttpServlet {
 		LoginAttemptInfo attemptInfo = userDao.getLoginAttemptInfo(email);
 
 		// Check if account is locked
-		if (attemptInfo != null && attemptInfo.isLocked && LoginAttemptUtil.isAccountLocked(attemptInfo.accountLockedUntilTime)) {
+		if (attemptInfo != null && attemptInfo.isLocked
+				&& LoginAttemptUtil.isAccountLocked(attemptInfo.accountLockedUntilTime)) {
 			long remainingMinutes = LoginAttemptUtil.getRemainingLockTimeMinutes(attemptInfo.accountLockedUntilTime);
 			request.setAttribute("error", String.format(
-				"Account is locked due to multiple failed login attempts. Please try again in %d minute(s).",
-				remainingMinutes
-			));
+					"Account is locked due to multiple failed login attempts. Please try again in %d minute(s).",
+					remainingMinutes));
 			request.setAttribute("returnUrl", returnUrl);
 			request.getRequestDispatcher(PageConstant.LOGIN_PAGE).forward(request, response);
 			return;
 		}
 
 		// If account was locked and time has expired, unlock it
-		if (attemptInfo != null && attemptInfo.isLocked && !LoginAttemptUtil.isAccountLocked(attemptInfo.accountLockedUntilTime)) {
+		if (attemptInfo != null && attemptInfo.isLocked
+				&& !LoginAttemptUtil.isAccountLocked(attemptInfo.accountLockedUntilTime)) {
 			userDao.unlockUserAccount(email);
 			attemptInfo = null; // Reset attempt info
 		}
@@ -171,21 +172,18 @@ public class AuthController extends HttpServlet {
 			LoginAttemptInfo updatedAttemptInfo = userDao.getLoginAttemptInfo(email);
 
 			// Check if we should lock the account
-			if (updatedAttemptInfo != null && updatedAttemptInfo.failedAttempts >= LoginAttemptUtil.MAX_FAILED_ATTEMPTS) {
+			if (updatedAttemptInfo != null
+					&& updatedAttemptInfo.failedAttempts >= LoginAttemptUtil.MAX_FAILED_ATTEMPTS) {
 				long lockUntilTime = LoginAttemptUtil.calculateLockExpirationTime();
 				userDao.lockUserAccount(email, lockUntilTime);
-				
-				request.setAttribute("error", String.format(
-					"Account locked after %d failed login attempts. Please try again in %d minutes.",
-					LoginAttemptUtil.MAX_FAILED_ATTEMPTS,
-					LoginAttemptUtil.ACCOUNT_LOCK_DURATION_MINUTES
-				));
+
+				request.setAttribute("error",
+						String.format("Account locked after %d failed login attempts. Please try again in %d minutes.",
+								LoginAttemptUtil.MAX_FAILED_ATTEMPTS, LoginAttemptUtil.ACCOUNT_LOCK_DURATION_MINUTES));
 			} else if (updatedAttemptInfo != null) {
 				int attemptsRemaining = LoginAttemptUtil.MAX_FAILED_ATTEMPTS - updatedAttemptInfo.failedAttempts;
-				request.setAttribute("error", String.format(
-					"Invalid email or password. (%d attempts remaining)",
-					attemptsRemaining
-				));
+				request.setAttribute("error",
+						String.format("Invalid email or password. (%d attempts remaining)", attemptsRemaining));
 			} else {
 				request.setAttribute("error", "Invalid email or password.");
 			}
@@ -245,7 +243,8 @@ public class AuthController extends HttpServlet {
 					String email = (String) session.getAttribute("resetEmail");
 					if (email != null && !email.isBlank()) {
 						String otp = ForgetPasswordUtil.generateAndStoreOTP(email);
-						String body = "Your SajhaKrishi password reset code is: " + otp + "\nThis code is valid for 10 minutes.";
+						String body = "Your SajhaKrishi password reset code is: " + otp
+								+ "\nThis code is valid for 10 minutes.";
 						EmailUtil.sendEmail(email, "SajhaKrishi Password Reset Code", body);
 						response.setStatus(HttpServletResponse.SC_OK);
 						return;
@@ -257,7 +256,12 @@ public class AuthController extends HttpServlet {
 
 			String stepParam = request.getParameter("step");
 			int step = 1;
-			try { if (stepParam != null) step = Integer.parseInt(stepParam); } catch (NumberFormatException ex) { step = 1; }
+			try {
+				if (stepParam != null)
+					step = Integer.parseInt(stepParam);
+			} catch (NumberFormatException ex) {
+				step = 1;
+			}
 
 			if (step == 1) {
 				String email = request.getParameter("email");
@@ -273,7 +277,8 @@ public class AuthController extends HttpServlet {
 				}
 
 				String otp = ForgetPasswordUtil.generateAndStoreOTP(email);
-				String body = "Your SajhaKrishi password reset code is: " + otp + "\nThis code is valid for 10 minutes.";
+				String body = "Your SajhaKrishi password reset code is: " + otp
+						+ "\nThis code is valid for 10 minutes.";
 				EmailUtil.sendEmail(email, "SajhaKrishi Password Reset Code", body);
 
 				HttpSession session = request.getSession();
@@ -469,7 +474,7 @@ public class AuthController extends HttpServlet {
 			if (email != null && !email.isEmpty()) {
 				// Unlock the user account
 				boolean success = userDao.unlockUserAccount(email);
-				
+
 				if (success) {
 					successMessage = "User account has been unlocked successfully.";
 				} else {

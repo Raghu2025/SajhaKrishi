@@ -29,6 +29,15 @@
 	--color-available-text: #274A0A;
 	--color-unavailable: #E2C4A0;
 	--color-unavailable-text: #5A3A10;
+	--color-danger: #EF4444;
+	--color-danger-light: #FEE2E2;
+	--color-danger-text: #7F1D1D;
+	--color-success: #10B981;
+	--color-success-light: #D1FAE5;
+	--color-success-text: #065F46;
+	--color-info: #3B82F6;
+	--color-info-light: #EFF6FF;
+	--color-secondary: #6B7280;
 	--font-sans: 'Inter', 'Segoe UI', sans-serif;
 	--font-size-sm: 13px;
 	--font-size-md: 15px;

@@ -13,4 +13,8 @@ public class PageConstant {
 	    public static final String EQUIPMENT_DETAIL = "/WEB-INF/pages/equipment-detail.jsp";
 	    public static final String BOOKING_LIST = "/WEB-INF/pages/booking-list.jsp";
 	    public static final String BOOKING_DETAIL = "/WEB-INF/pages/booking-detail.jsp";
-	    public static final String FORGET_PASSWORD = "/WEB-INF/pages/forget-password.jsp";	public static final String PROFILE = "/WEB-INF/pages/profile.jsp";}
+	    public static final String FORGET_PASSWORD = "/WEB-INF/pages/forget-password.jsp";
+	    public static final String CATEGORY_LIST = "/WEB-INF/pages/category-list.jsp";
+	    public static final String CATEGORY_ADD = "/WEB-INF/pages/category-add.jsp";
+	    public static final String CATEGORY_DETAIL = "/WEB-INF/pages/category-detail.jsp";
+	    public static final String PROFILE = "/WEB-INF/pages/profile.jsp";}

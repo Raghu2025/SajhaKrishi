@@ -22,12 +22,13 @@ public class CategoryDao {
         }
     }
 
-    // ════════════════════════════
-    //  CREATE
-    // ════════════════════════════
+    /**
+     * Add Category
+     * @param category
+     * @return
+     */
     public boolean addCategory(CategoryModel category) {
-        String query = "INSERT INTO category (name, description, icon, status) " +
-                       "VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO category (name, status) VALUES (?, ?)";
 
         if (conn == null) {
             System.err.println("Database connection is null");
@@ -37,7 +38,7 @@ public class CategoryDao {
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, category.getName());
-            pstmt.setString(2, category.getStatus());
+            pstmt.setString(2, "A"); // Default status is Active
 
             int rowsInserted = pstmt.executeUpdate();
 
@@ -55,9 +56,34 @@ public class CategoryDao {
         }
     }
 
-    // ════════════════════════════
-    //  READ — Single by ID
-    // ════════════════════════════
+
+    /**
+     * 
+     *
+     * @return
+     */
+    public List<CategoryModel> getAllCategories() {
+        List<CategoryModel> categoryList = new ArrayList<>();
+        String query = "SELECT * FROM category WHERE status = 'A' ORDER BY name ASC";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                categoryList.add(mapResultSetToCategory(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching all category: " + e.getMessage());
+        }
+        return categoryList;
+    }
+    
+
+    /**
+     * @param id
+     * @return
+     */
     public CategoryModel getCategoryById(int id) {
         String query = "SELECT * FROM category WHERE id = ?";
 
@@ -77,52 +103,11 @@ public class CategoryDao {
         return null;
     }
 
-    // ════════════════════════════
-    //  READ — Single by Name
-    // ════════════════════════════
-    public CategoryModel getCategoryByName(String name) {
-        String query = "SELECT * FROM category WHERE name = ? AND status = 'A'";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, name);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToCategory(rs);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching category by name: " + e.getMessage());
-        }
-        return null;
-    }
-
-    // ════════════════════════════
-    //  READ — All Active
-    // ════════════════════════════
-    public List<CategoryModel> getAllCategories() {
-        List<CategoryModel> categoryList = new ArrayList<>();
-        String query = "SELECT * FROM category WHERE status = 'A' ORDER BY name ASC";
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query);
-             ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                categoryList.add(mapResultSetToCategory(rs));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching all category: " + e.getMessage());
-        }
-        return categoryList;
-    }
-
-    // ════════════════════════════
-    //  READ — All including inactive
-    //  (Admin only)
-    // ════════════════════════════
+    
+    /**
+     * 
+     * @return
+     */
     public List<CategoryModel> getAllCategoriesAdmin() {
         List<CategoryModel> categoryList = new ArrayList<>();
         String query = "SELECT * FROM category ORDER BY name ASC";
@@ -140,10 +125,11 @@ public class CategoryDao {
         return categoryList;
     }
 
-    // ════════════════════════════
-    //  CHECK — Name exists
-    //  Prevent duplicate category
-    // ════════════════════════════
+    /**
+     * 
+     * @param name
+     * @return
+     */
     public boolean isCategoryNameExists(String name) {
         String query = "SELECT COUNT(*) FROM category WHERE name = ?";
 
@@ -163,18 +149,18 @@ public class CategoryDao {
         return false;
     }
 
-    // ════════════════════════════
-    //  UPDATE
-    // ════════════════════════════
+
+    /**
+     * 
+     */
     public boolean updateCategory(CategoryModel category) {
-        String query = "UPDATE category SET name=?, description=?, icon=? WHERE id=?";
+        String query = "UPDATE category SET name=? WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, category.getName());
-            pstmt.setString(2, category.getStatus());
-            pstmt.setInt(4,    category.getId());
+            pstmt.setInt(2, category.getId());
 
             return pstmt.executeUpdate() > 0;
 
@@ -183,10 +169,38 @@ public class CategoryDao {
             return false;
         }
     }
+    
 
-    // ════════════════════════════
-    //  DELETE — Soft Delete
-    // ════════════════════════════
+    /**
+     * 
+     * @param name
+     * @return
+     */
+    public CategoryModel getCategoryByName(String name) {
+        String query = "SELECT * FROM category WHERE name = ? AND status = 'A'";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            pstmt.setString(1, name);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToCategory(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching category by name: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    /**
+     * 
+     * @param id
+     * @return
+     */
     public boolean deleteCategory(int id) {
         String query = "UPDATE category SET status = 'I' WHERE id = ?";
 
@@ -202,9 +216,13 @@ public class CategoryDao {
         }
     }
 
-    // ════════════════════════════
-    //  MAPPER
-    // ════════════════════════════
+
+    /**
+     * 
+     * @param rs
+     * @return
+     * @throws SQLException
+     */
     private CategoryModel mapResultSetToCategory(ResultSet rs) throws SQLException {
         CategoryModel category = new CategoryModel();
         category.setId(rs.getInt("id"));

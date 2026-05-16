@@ -1,0 +1,7 @@
+@charset "UTF-8";
+
+@import "equipment-add.css";
+
+.form-group {
+	margin-bottom: 10px !important;
+}

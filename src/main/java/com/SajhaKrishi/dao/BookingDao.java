@@ -71,7 +71,6 @@ public class BookingDao {
 		}
 	}
 
-
 	/**
 	 * 
 	 * @param id
@@ -79,16 +78,16 @@ public class BookingDao {
 	 */
 	public BookingModel getBookingById(int id) {
 		String query = """
-		        SELECT b.*, 
-	               e.name AS equipment_name, 
-	               e.image_path,
-	               e.price_per_day,
-	               c.name AS category_name
-	        FROM bookings b
-	        JOIN equipment e ON b.equipment_id = e.id
-	        JOIN category c ON e.category_id = c.id
-	        WHERE b.id = ?
-	    """;
+				     SELECT b.*,
+				           e.name AS equipment_name,
+				           e.image_path,
+				           e.price_per_day,
+				           c.name AS category_name
+				    FROM bookings b
+				    JOIN equipment e ON b.equipment_id = e.id
+				    JOIN category c ON e.category_id = c.id
+				    WHERE b.id = ?
+				""";
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -146,34 +145,34 @@ public class BookingDao {
 	public List<BookingModel> getBookingsByKisan(int kisanId, String status) {
 		List<BookingModel> bookingList = new ArrayList<>();
 		String query;
-		
+
 		// Build query based on whether status is provided
 		if (status == null || status.isEmpty()) {
-		    query = """
-		        SELECT b.*, 
-		               e.name AS equipment_name, 
-		               e.image_path,
-		               e.price_per_day,
-		               c.name AS category_name
-		        FROM bookings b
-		        JOIN equipment e ON b.equipment_id = e.id
-		        JOIN category c ON e.category_id = c.id
-		        WHERE b.kisan_id = ? AND b.status = 'A'
-		        ORDER BY b.booked_at DESC
-		    """;
+			query = """
+					    SELECT b.*,
+					           e.name AS equipment_name,
+					           e.image_path,
+					           e.price_per_day,
+					           c.name AS category_name
+					    FROM bookings b
+					    JOIN equipment e ON b.equipment_id = e.id
+					    JOIN category c ON e.category_id = c.id
+					    WHERE b.kisan_id = ? AND b.status = 'A'
+					    ORDER BY b.booked_at DESC
+					""";
 		} else {
-		    query = """
-		        SELECT b.*, 
-		               e.name AS equipment_name, 
-		               e.image_path,
-		               e.price_per_day,
-		               c.name AS category_name
-		        FROM bookings b
-		        JOIN equipment e ON b.equipment_id = e.id
-		        JOIN category c ON e.category_id = c.id
-		        WHERE b.kisan_id = ? AND b.status_flag = ? AND b.status = 'A'
-		        ORDER BY b.booked_at DESC
-		    """;
+			query = """
+					    SELECT b.*,
+					           e.name AS equipment_name,
+					           e.image_path,
+					           e.price_per_day,
+					           c.name AS category_name
+					    FROM bookings b
+					    JOIN equipment e ON b.equipment_id = e.id
+					    JOIN category c ON e.category_id = c.id
+					    WHERE b.kisan_id = ? AND b.status_flag = ? AND b.status = 'A'
+					    ORDER BY b.booked_at DESC
+					""";
 		}
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -204,34 +203,34 @@ public class BookingDao {
 	public List<BookingModel> getBookingsByOwner(int ownerId, String status) {
 		List<BookingModel> bookingList = new ArrayList<>();
 		String query;
-		
+
 		// Build query based on whether status is provided
 		if (status == null || status.isEmpty()) {
-		    query = """
-		        SELECT b.*, 
-		               e.name AS equipment_name, 
-		               e.image_path,
-		               e.price_per_day,
-		               c.name AS category_name
-		        FROM bookings b
-		        JOIN equipment e ON b.equipment_id = e.id
-		        JOIN category c ON e.category_id = c.id
-		        WHERE b.owner_id = ? AND b.status = 'A'
-		        ORDER BY b.booked_at DESC
-		    """;
+			query = """
+					    SELECT b.*,
+					           e.name AS equipment_name,
+					           e.image_path,
+					           e.price_per_day,
+					           c.name AS category_name
+					    FROM bookings b
+					    JOIN equipment e ON b.equipment_id = e.id
+					    JOIN category c ON e.category_id = c.id
+					    WHERE b.owner_id = ? AND b.status = 'A'
+					    ORDER BY b.booked_at DESC
+					""";
 		} else {
-		    query = """
-		        SELECT b.*, 
-		               e.name AS equipment_name, 
-		               e.image_path,
-		               e.price_per_day,
-		               c.name AS category_name
-		        FROM bookings b
-		        JOIN equipment e ON b.equipment_id = e.id
-		        JOIN category c ON e.category_id = c.id
-		        WHERE b.owner_id = ? AND b.status_flag = ? AND b.status = 'A'
-		        ORDER BY b.booked_at DESC
-		    """;
+			query = """
+					    SELECT b.*,
+					           e.name AS equipment_name,
+					           e.image_path,
+					           e.price_per_day,
+					           c.name AS category_name
+					    FROM bookings b
+					    JOIN equipment e ON b.equipment_id = e.id
+					    JOIN category c ON e.category_id = c.id
+					    WHERE b.owner_id = ? AND b.status_flag = ? AND b.status = 'A'
+					    ORDER BY b.booked_at DESC
+					""";
 		}
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -276,31 +275,57 @@ public class BookingDao {
 		return bookingList;
 	}
 
-
 	/**
 	 * 
 	 * @param status
 	 * @return
 	 */
 	public List<BookingModel> getBookingsByStatus(String status) {
-		List<BookingModel> bookingList = new ArrayList<>();
-		String query = "SELECT * FROM bookings WHERE status_flag = ? AND status = 'A' ORDER BY booked_at DESC";
+		 String query;
 
-		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
+		    if (status == null || status.isEmpty()) {
+		        query = """
+		            SELECT b.*, 
+		                   e.name AS equipment_name,
+		                   e.image_path,
+		                   c.name AS category_name
+		            FROM bookings b
+		            JOIN equipment e ON b.equipment_id = e.id
+		            JOIN category c ON e.category_id = c.id
+		            WHERE b.status = 'A'
+		            ORDER BY b.booked_at DESC
+		        """;
+		    } else {
+		        query = """
+		            SELECT b.*, 
+		                   e.name AS equipment_name,
+		                   e.image_path,
+		                   c.name AS category_name
+		            FROM bookings b
+		            JOIN equipment e ON b.equipment_id = e.id
+		            JOIN category c ON e.category_id = c.id
+		            WHERE b.status_flag = ?
+		            AND b.status = 'A'
+		            ORDER BY b.booked_at DESC
+		        """;
+		    }
 
-			pstmt.setString(1, status);
+		    List<BookingModel> list = new ArrayList<>();
 
-			try (ResultSet rs = pstmt.executeQuery()) {
-				while (rs.next()) {
-					bookingList.add(mapResultSetToBooking(rs));
-				}
-			}
-		} catch (SQLException e) {
-			System.err.println("Error fetching bookings by status: " + e.getMessage());
-		}
-		return bookingList;
+		    try (PreparedStatement ps = conn.prepareStatement(query)) {
+		        if (status != null && !status.isEmpty()) {
+		            ps.setString(1, status);
+		        }
+		        ResultSet rs = ps.executeQuery();
+		        while (rs.next()) {
+		            list.add(mapResultSetToBooking(rs));
+		        }
+		    } catch (SQLException e) {
+		        System.out.println("Error fetching bookings by status: " + e.getMessage());
+		    }
+
+		    return list;
 	}
-
 
 	/**
 	 * 

@@ -97,6 +97,8 @@ public class BookingController extends HttpServlet {
 	        response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
 	        return;
 	    }
+	    
+	    boolean isAdmin = user.getRoleId() == 1;
 
 	    // "mine"  = bookings I made as a farmer (kisan)
 	    // "owner" = booking requests on my equipment (default)
@@ -107,12 +109,15 @@ public class BookingController extends HttpServlet {
 	    if (type == null || type.isBlank()) type = "owner";
 
 	    List<BookingModel> bookingList;
-
-	    if (type.equals("mine")) {
-	        bookingList = bookingDao.getBookingsByKisan(user.getId(), status);
-	    } else {
-	        bookingList = bookingDao.getBookingsByOwner(user.getId(), status);
-	    }
+	    
+		if (isAdmin) {
+			bookingList = bookingDao.getBookingsByStatus(status);
+		}
+		else if (type.equals("mine")) {
+			bookingList = bookingDao.getBookingsByKisan(user.getId(), status);
+		} else {
+			bookingList = bookingDao.getBookingsByOwner(user.getId(), status);
+		}
 
 	    request.setAttribute("bookingList", bookingList);
 	    request.setAttribute("currentType",   type);
