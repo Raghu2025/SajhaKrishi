@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 15, 2026 at 06:43 PM
+-- Generation Time: May 16, 2026 at 11:32 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,9 +55,9 @@ INSERT INTO `bookings` (`id`, `equipment_id`, `kisan_id`, `owner_id`, `start_dat
 (1, 14, 21, 20, '2026-05-13', '2026-05-16', 3, 988.00, 2964.00, 42.00, 'A', 'UNPAID', 'Kathmandu', '', 'COMPLETED', '2026-05-13 11:19:58', '2026-05-13 11:19:58'),
 (2, 14, 21, 20, '2026-05-13', '2026-05-15', 2, 988.00, 1976.00, 42.00, 'A', 'UNPAID', 'dvdvd', '', 'PENDING', '2026-05-13 11:22:38', '2026-05-13 11:22:38'),
 (3, 14, 21, 20, '2026-05-13', '2026-05-16', 3, 988.00, 2964.00, 42.00, 'A', 'UNPAID', 'Kathmandu', '', 'PENDING', '2026-05-13 11:23:41', '2026-05-13 11:23:41'),
-(4, 14, 21, 20, '2026-05-13', '2026-05-15', 2, 988.00, 1976.00, 42.00, 'A', 'UNPAID', 'kathandu', '', 'PENDING', '2026-05-13 11:25:44', '2026-05-13 11:25:44'),
-(5, 14, 21, 20, '2026-06-14', '2026-06-20', 6, 988.00, 5928.00, 42.00, 'A', 'UNPAID', 'Mandikatar, Kathmandu', '', 'PENDING', '2026-05-14 09:28:27', '2026-05-14 09:28:27'),
-(6, 14, 21, 20, '2026-06-14', '2026-06-20', 6, 988.00, 5928.00, 42.00, 'A', 'UNPAID', 'Kathmandu', '', 'PENDING', '2026-05-14 09:29:01', '2026-05-14 09:29:01');
+(4, 14, 21, 20, '2026-05-13', '2026-05-15', 2, 988.00, 1976.00, 42.00, 'A', 'UNPAID', 'kathandu', '', 'CANCELLED', '2026-05-13 11:25:44', '2026-05-13 11:25:44'),
+(5, 14, 21, 20, '2026-06-14', '2026-06-20', 6, 988.00, 5928.00, 42.00, 'A', 'UNPAID', 'Mandikatar, Kathmandu', '', 'CONFIRMED', '2026-05-14 09:28:27', '2026-05-14 09:28:27'),
+(6, 14, 21, 20, '2026-06-14', '2026-06-20', 6, 988.00, 5928.00, 42.00, 'A', 'UNPAID', 'Kathmandu', '', 'CANCELLED', '2026-05-14 09:29:01', '2026-05-14 09:29:01');
 
 -- --------------------------------------------------------
 
@@ -79,7 +79,7 @@ INSERT INTO `category` (`id`, `name`, `status`) VALUES
 (1, 'Tractors & Power Tillers', 'A'),
 (2, 'Mini Tillers & Weeders', 'A'),
 (3, 'Irrigation & Pumps', 'A'),
-(4, 'Harvesting Machinery', 'A'),
+(4, 'Harvesting Machinery1', 'A'),
 (5, 'Post-Harvest Tools', 'A'),
 (6, 'Plant Protection', 'A'),
 (7, 'Seeding & Fertilizing', 'A'),
@@ -183,19 +183,23 @@ CREATE TABLE `users` (
   `role` bigint(20) DEFAULT NULL,
   `status` varchar(5) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `email` varchar(25) DEFAULT NULL
+  `email` varchar(25) DEFAULT NULL,
+  `failed_login_attempts` int(11) DEFAULT 0,
+  `last_failed_login` bigint(20) DEFAULT NULL,
+  `account_locked_until` bigint(20) DEFAULT NULL,
+  `is_locked` char(1) DEFAULT 'N'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `full_name`, `phone_number`, `password`, `address`, `district`, `role`, `status`, `created_at`, `email`) VALUES
-(17, 'Raghu', '9800000000', '$2a$10$ct0hO2O6GVNciu.gLZGYHOjWux/dPsFnUxqtYfakwRLB2DSCdc0aO', 'Kaldara', 'Kathmandu', 2, 'A', '2026-04-17 04:44:38', 'admin@gmail.com'),
-(18, 'Bijay', '12345678', '$2a$10$CLsHem/j9RuTKTh5A3c15ufbrN4B4XaPLcMNKiPbqY1rLKaEP6bUO', 'Koteshowor', 'Kathmandu', 2, 'A', '2026-05-04 08:26:25', 'bijay@gmail.com'),
-(19, 'Zenia Harmon', '+1 (239) 363-2407', '$2a$10$Jwamp.xSZIy3qUzsY70Ln.cO8lBzUXMhx3nrOkfICPi62CZzppHcC', 'Esse nostrud placea', 'Bhaktapur', 2, 'A', '2026-05-04 08:27:06', 'borir@mailinator.com'),
-(20, 'Maryam Wynn', '+1 (402) 655-9355', '$2a$10$NYm7qsCRytLZ.R.R5UyrPe46ASOdHAqtYon/P.fp9nxYz0G5/pZo.', 'Consequatur Ut qui ', 'Dailekh', 2, 'A', '2026-05-04 08:27:52', 'nure@mailinator.com'),
-(21, 'Paula Young', '+1 (659) 347-4603', '$2a$10$NYm7qsCRytLZ.R.R5UyrPe46ASOdHAqtYon/P.fp9nxYz0G5/pZo.', 'Ipsum eiusmod corpor', 'Banke', 2, 'A', '2026-05-13 05:13:55', 'kigu@mailinator.com');
+INSERT INTO `users` (`id`, `full_name`, `phone_number`, `password`, `address`, `district`, `role`, `status`, `created_at`, `email`, `failed_login_attempts`, `last_failed_login`, `account_locked_until`, `is_locked`) VALUES
+(17, 'Raghu', '9800000000', '$2a$10$IYLLwAUpss4PURT4g941y.L9fcxItbHEaXmUtzeeQuDF2OXm.2G4W', 'Kaldara', 'Humla', 1, 'A', '2026-04-17 04:44:38', 'admin@gmail.com', 0, NULL, NULL, 'N'),
+(18, 'Bijay', '12345678', '$2a$10$CLsHem/j9RuTKTh5A3c15ufbrN4B4XaPLcMNKiPbqY1rLKaEP6bUO', 'Koteshowor', 'Kathmandu', 2, 'A', '2026-05-04 08:26:25', 'bijay@gmail.com', 0, NULL, NULL, 'N'),
+(19, 'Zenia Harmon', '+1 (239) 363-2407', '$2a$10$Jwamp.xSZIy3qUzsY70Ln.cO8lBzUXMhx3nrOkfICPi62CZzppHcC', 'Esse nostrud placea', 'Bhaktapur', 2, 'A', '2026-05-04 08:27:06', 'borir@mailinator.com', 0, NULL, NULL, 'N'),
+(20, 'Maryam Wynn', '+1 (402) 655-9355', '$2a$10$NYm7qsCRytLZ.R.R5UyrPe46ASOdHAqtYon/P.fp9nxYz0G5/pZo.', 'Consequatur Ut qui ', 'Dailekh', 2, 'A', '2026-05-04 08:27:52', 'nure@mailinator.com', 0, NULL, NULL, 'N'),
+(21, 'Paula Young', '+1 (659) 347-4603', '$2a$10$NYm7qsCRytLZ.R.R5UyrPe46ASOdHAqtYon/P.fp9nxYz0G5/pZo.', 'Ipsum eiusmod corpor', 'Banke', 2, 'A', '2026-05-13 05:13:55', 'kigu@mailinator.com', 0, NULL, NULL, 'N');
 
 --
 -- Indexes for dumped tables
@@ -242,7 +246,8 @@ ALTER TABLE `role`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_user_role` (`role`);
+  ADD KEY `fk_user_role` (`role`),
+  ADD KEY `idx_email` (`email`);
 
 --
 -- AUTO_INCREMENT for dumped tables
