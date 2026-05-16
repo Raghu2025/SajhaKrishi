@@ -311,10 +311,10 @@ body {
 }
 
 /* PRICE SUMMARY */
-.price-summary-card {
+/* .price-summary-card {
 	position: sticky;
 	top: 1rem;
-}
+} */
 
 .price-breakdown {
 	display: flex;

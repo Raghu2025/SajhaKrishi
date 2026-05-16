@@ -8,9 +8,9 @@ public class PageConstant {
 	    public static final String LAYOUT = "/WEB-INF/pages/sidebar.jsp";
 	    public static final String DASHBOARD = "/WEB-INF/pages/dashboard.jsp";
 	    public static final String EQUIPMENT_LIST = "/WEB-INF/pages/equipment-list.jsp";
+		public static final String USER_LIST = "/WEB-INF/pages/user-list.jsp";
 	    public static final String EQUIPMENT_ADD = "/WEB-INF/pages/equipment-add.jsp";
 	    public static final String EQUIPMENT_DETAIL = "/WEB-INF/pages/equipment-detail.jsp";
 	    public static final String BOOKING_LIST = "/WEB-INF/pages/booking-list.jsp";
 	    public static final String BOOKING_DETAIL = "/WEB-INF/pages/booking-detail.jsp";
-	    public static final String FORGET_PASSWORD = "/WEB-INF/pages/forget-password.jsp";
-}
+	    public static final String FORGET_PASSWORD = "/WEB-INF/pages/forget-password.jsp";	public static final String PROFILE = "/WEB-INF/pages/profile.jsp";}

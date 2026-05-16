@@ -53,7 +53,7 @@ public class BookingDao {
 			pstmt.setString(11, booking.getPaymentStatus());
 			pstmt.setString(12, booking.getPickupAddress());
 			pstmt.setString(13, booking.getNotes());
-			pstmt.setString(14, booking.getStatus());
+			pstmt.setString(14, booking.getStatusFlag());
 
 			int rowsInserted = pstmt.executeUpdate();
 
@@ -71,11 +71,24 @@ public class BookingDao {
 		}
 	}
 
-	// ════════════════════════════
-	// READ — Single
-	// ════════════════════════════
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public BookingModel getBookingById(int id) {
-		String query = "SELECT * FROM bookings WHERE id = ?";
+		String query = """
+		        SELECT b.*, 
+	               e.name AS equipment_name, 
+	               e.image_path,
+	               e.price_per_day,
+	               c.name AS category_name
+	        FROM bookings b
+	        JOIN equipment e ON b.equipment_id = e.id
+	        JOIN category c ON e.category_id = c.id
+	        WHERE b.id = ?
+	    """;
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -99,7 +112,16 @@ public class BookingDao {
 	 */
 	public List<BookingModel> getAllBookings() {
 		List<BookingModel> bookingList = new ArrayList<>();
-		String query = "SELECT * FROM bookings WHERE status_flag = 'A' ORDER BY booked_at DESC";
+		String query = """
+				     SELECT b.*,
+				           e.name AS equipment_name,
+				           e.image_path,
+				           e.price_per_day,
+				           c.name AS category_name
+				    FROM bookings b
+				    JOIN equipment e ON b.equipment_id = e.id
+				    JOIN category c ON e.category_id = c.id
+				""";
 
 		try (Connection conn = DBConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(query);
@@ -227,13 +249,14 @@ public class BookingDao {
 		} catch (SQLException e) {
 			System.err.println("Error fetching bookings by owner: " + e.getMessage());
 		}
-		System.out.println("Bookings found: " + bookingList.size());
 		return bookingList;
 	}
 
-	// ════════════════════════════
-	// READ — By Equipment
-	// ════════════════════════════
+	/**
+	 * 
+	 * @param equipmentId
+	 * @return
+	 */
 	public List<BookingModel> getBookingsByEquipment(int equipmentId) {
 		List<BookingModel> bookingList = new ArrayList<>();
 		String query = "SELECT * FROM bookings WHERE equipment_id = ? AND status_flag = 'A'";
@@ -253,12 +276,15 @@ public class BookingDao {
 		return bookingList;
 	}
 
-	// ════════════════════════════
-	// READ — By Status
-	// ════════════════════════════
+
+	/**
+	 * 
+	 * @param status
+	 * @return
+	 */
 	public List<BookingModel> getBookingsByStatus(String status) {
 		List<BookingModel> bookingList = new ArrayList<>();
-		String query = "SELECT * FROM bookings WHERE status = ? AND status_flag = 'A' ORDER BY booked_at DESC";
+		String query = "SELECT * FROM bookings WHERE status_flag = ? AND status = 'A' ORDER BY booked_at DESC";
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -311,7 +337,7 @@ public class BookingDao {
 	 * @return
 	 */
 	public boolean updateBookingStatus(int id, String status) {
-		String query = "UPDATE bookings SET status = ? WHERE id = ?";
+		String query = "UPDATE bookings SET status_flag = ? WHERE id = ?";
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 
@@ -356,7 +382,7 @@ public class BookingDao {
 	 * @return
 	 */
 	public boolean deleteBooking(int id) {
-		String query = "UPDATE bookings SET status_flag = 'I' WHERE id = ?";
+		String query = "UPDATE bookings SET status_flag = 'CANCELLED' WHERE id = ?";
 
 		try (Connection conn = DBConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(query)) {
 

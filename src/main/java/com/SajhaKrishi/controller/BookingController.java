@@ -55,6 +55,9 @@ public class BookingController extends HttpServlet {
 		} else if (pathInfo.equals(ApiConstant.DELETE)) {
 			handleCancel(request, response);
 
+		} else if (pathInfo.equals("/update")) {
+			handleUpdateStatus(request, response);
+
 		} else {
 			response.sendRedirect(request.getContextPath() + ApiConstant.BOOKING + ApiConstant.LIST);
 		}
@@ -63,6 +66,11 @@ public class BookingController extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		String pathInfo = request.getPathInfo();
+		if ("/update".equals(pathInfo)) {
+			handleUpdateStatus(request, response);
+			return;
+		}
 		handleCreateBooking(request, response);
 	}
 
@@ -216,6 +224,7 @@ public class BookingController extends HttpServlet {
 			booking.setPricePerDay(equipment.getPricePerDay());
 			booking.setTotalPrice(totalPrice);
 			booking.setDepositAmount(equipment.getDepositAmount());
+			booking.setStatus("A");
 			booking.setStatusFlag(BookingStatus.PENDING.name());
 			booking.setPaymentStatus(PaymentStatus.UNPAID.name());
 			booking.setPickupAddress(pickupAddress);
@@ -250,8 +259,18 @@ public class BookingController extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
+			HttpSession session = request.getSession(false);
+			if (session == null || session.getAttribute(ApiConstant.USER_SESSION_KEY) == null) {
+				response.sendRedirect(request.getContextPath() + ApiConstant.LOGIN);
+				return;
+			}
+
 			int bookingId = Integer.parseInt(request.getParameter("bookingId"));
 			String newStatus = request.getParameter("status");
+			String type = request.getParameter("type");
+			if (type == null || type.isBlank()) {
+				type = "owner";
+			}
 
 			// Validate status
 			if (newStatus == null || newStatus.trim().isEmpty()) {
@@ -272,7 +291,7 @@ public class BookingController extends HttpServlet {
 				request.getSession().setAttribute("error", "Failed to update booking status");
 			}
 
-			response.sendRedirect(request.getContextPath() + "/booking/details?id=" + bookingId);
+			response.sendRedirect(request.getContextPath() + ApiConstant.BOOKING + ApiConstant.LIST + "?type=" + type);
 
 		} catch (NumberFormatException e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid booking ID");
@@ -330,7 +349,14 @@ public class BookingController extends HttpServlet {
 	 * @return
 	 */
 	private boolean isValidStatus(String status) {
-		return status.equals("Pending") || status.equals("Confirmed") || status.equals("Cancelled")
-				|| status.equals("Completed");
+		if (status == null || status.isBlank()) {
+			return false;
+		}
+		try {
+			BookingStatus.valueOf(status);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 }

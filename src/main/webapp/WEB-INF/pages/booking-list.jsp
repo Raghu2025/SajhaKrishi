@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="com.SajhaKrishi.constant.*"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Bookings | Sajha Krishi</title>
@@ -76,7 +76,7 @@
 							</thead>
 							<tbody>
 								<c:forEach var="booking" items="${bookingList}">
-									<tr class="booking-row" data-status="${booking.status}">
+									<tr class="booking-row" data-status="${booking.statusFlag}">
 										<td class="booking-id"><span class="badge">#${booking.id}</span>
 										</td>
 										<td class="equipment-name">${booking.equipmentName}</td>
@@ -141,12 +141,12 @@
 												<%-- PENDING: can Confirm or Cancel --%>
 												<c:if test="${booking.statusFlag == 'PENDING'}">
 													<c:if test="${currentType == 'owner'}">
-														<button onclick="updateStatus(${booking.id}, 'CONFIRMED')"
+														<button data-booking-id="${booking.id}" data-status="CONFIRMED" onclick="updateStatus(this)"
 															class="btn btn-primary btn-sm">
 															<i class="fa fa-check"></i> Confirm
 														</button>
 													</c:if>
-													<button onclick="updateStatus(${booking.id}, 'CANCELLED')"
+													<button data-booking-id="${booking.id}" data-status="CANCELLED" onclick="updateStatus(this)"
 														class="btn btn-danger btn-sm">
 														<i class="fa fa-times"></i> Cancel
 													</button>
@@ -154,11 +154,11 @@
 
 												<c:if test="${booking.statusFlag == 'CONFIRMED'}">
 													<c:if test="${currentType == 'owner'}">
-														<button onclick="updateStatus(${booking.id}, 'COMPLETED')"
+														<button data-booking-id="${booking.id}" data-status="COMPLETED" onclick="updateStatus(this)"
 															class="btn btn-primary btn-sm">
 															<i class="fa fa-check-circle"></i> Complete
 														</button>
-														<button onclick="updateStatus(${booking.id}, 'CANCELLED')"
+														<button data-booking-id="${booking.id}" data-status="CANCELLED" onclick="updateStatus(this)"
 															class="btn btn-danger btn-sm">
 															<i class="fa fa-times"></i> Cancel
 														</button>
@@ -178,30 +178,18 @@
 	</div>
 
 	<script>
-		// Filter functionality
-		document.querySelectorAll('.filter-btn').forEach(btn => {
-			btn.addEventListener('click', function() {
-				document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-				this.classList.add('active');
-
-				const filter = this.getAttribute('data-filter');
-				const rows = document.querySelectorAll('.booking-row');
-
-				rows.forEach(row => {
-					if (filter === 'all' || row.getAttribute('data-status') === filter) {
-						row.style.display = '';
-					} else {
-						row.style.display = 'none';
-					}
-				});
-			});
-		});
-
-		// Cancel booking function
-		function cancelBooking(bookingId) {
-			if (confirm('Are you sure you want to cancel this booking?')) {
-				location.href = '${pageContext.request.contextPath}/booking/delete?id=' + bookingId;
+		function updateStatus(button) {
+			const bookingId = button.getAttribute('data-booking-id');
+			const newStatus = button.getAttribute('data-status');
+			const actionLabel = newStatus.charAt(0) + newStatus.slice(1).toLowerCase();
+			if (!confirm('Are you sure you want to mark this booking as ' + actionLabel + '?')) {
+				return;
 			}
+
+			const type = '${currentType}';
+			location.href = '${pageContext.request.contextPath}/booking/update?bookingId=' + bookingId
+					+ '&status=' + encodeURIComponent(newStatus)
+					+ '&type=' + encodeURIComponent(type);
 		}
 	</script>
 </body>

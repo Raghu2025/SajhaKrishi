@@ -5,7 +5,9 @@ public class ApiConstant {
 	public static final String REGISTER = "/register";
 	public static final String LOGOUT = "/logout";
 	public static final String FORGET_PASSWORD = "/forget-password";
+	public static final String PROFILE = "/profile";
 	public static final String KISSAN_EQUIPMENT = "/kisan/equipment";
+	public static final String ADMIN_USERS = "/admin/users";
 	public static final String OWNER_EQUIPMENT = "/owner/equipment";
 	public static final String BOOKING = "/booking";
 	public static final String SELF_BOOKING = "/self";

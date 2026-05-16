@@ -17,8 +17,8 @@ public class BookingModel extends Base {
 	private double depositAmount;
 
 	private String status;
-	private String statusFlag; // "Pending", "Confirmed", "Cancelled", "Completed"
-	private String paymentStatus; // "Unpaid", "Paid", "Refunded"
+	private String statusFlag;
+	private String paymentStatus;
 
 	private String pickupAddress;
 	private String notes;

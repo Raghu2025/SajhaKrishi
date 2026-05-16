@@ -6,7 +6,7 @@
 <jsp:useBean id="api" class="com.SajhaKrishi.constant.ApiConstant"
 	scope="application" />
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,13 +49,13 @@
 
 					<div class="status-badges">
 						<span
-							class="booking-status status-${booking.status.toLowerCase()}">
-							<i class="fa fa-info-circle"></i> ${booking.status}
+							class="booking-status status-${booking.statusFlag.toLowerCase()}">
+							<i class="fa fa-info-circle"></i> ${booking.statusFlag}
 						</span>
 						<span
 							class="payment-status payment-${booking.paymentStatus.toLowerCase()}">
 							<i
-							class="fa ${booking.paymentStatus == 'Paid' ? 'fa-check-circle' : 'fa-hourglass-half'}"></i>
+							class="fa ${booking.paymentStatus == 'PAID' ? 'fa-check-circle' : 'fa-hourglass-half'}"></i>
 							${booking.paymentStatus}
 						</span>
 					</div>
@@ -191,9 +191,9 @@
 					</div>
 
 					<!-- Status Information -->
-					<div class="status-section">
+<%-- 					<div class="status-section">
 						<c:choose>
-							<c:when test="${booking.paymentStatus == 'Paid'}">
+							<c:when test="${booking.paymentStatus == 'PAID'}">
 								<div class="status-info success">
 									<i class="fa fa-check-circle"></i>
 									<div>
@@ -202,7 +202,7 @@
 									</div>
 								</div>
 							</c:when>
-							<c:when test="${booking.paymentStatus == 'Unpaid'}">
+							<c:when test="${booking.paymentStatus == 'UNPAID'}">
 								<div class="status-info warning">
 									<i class="fa fa-exclamation-triangle"></i>
 									<div>
@@ -221,26 +221,14 @@
 								</div>
 							</c:otherwise>
 						</c:choose>
-					</div>
+					</div> --%>
 
 					<!-- Actions -->
 					<div class="action-buttons">
 						<c:choose>
-							<c:when
-								test="${booking.status == 'Pending' && booking.paymentStatus == 'Unpaid'}">
-								<button class="btn btn-primary" onclick="proceedToPayment()">
-									<i class="fa fa-credit-card"></i> Pay Now
-								</button>
+							<c:when test="${booking.statusFlag != 'COMPLETED' && booking.statusFlag != 'CANCELLED'}">
 								<button class="btn btn-outline" onclick="cancelBooking()">
 									<i class="fa fa-times"></i> Cancel Booking
-								</button>
-							</c:when>
-							<c:when test="${booking.status != 'Completed' && booking.status != 'Cancelled'}">
-								<button class="btn btn-outline" onclick="cancelBooking()">
-									<i class="fa fa-times"></i> Cancel Booking
-								</button>
-								<button class="btn btn-primary">
-									<i class="fa fa-print"></i> Print Booking
 								</button>
 							</c:when>
 							<c:otherwise>
@@ -259,7 +247,7 @@
 					</h3>
 					<div class="timeline">
 						<div
-							class="timeline-item ${booking.status != 'Pending' ? 'completed' : 'active'}">
+							class="timeline-item ${booking.statusFlag != 'PENDING' ? 'completed' : 'active'}">
 							<div class="timeline-marker"></div>
 							<div class="timeline-content">
 								<strong>Booking Created</strong>
@@ -267,20 +255,20 @@
 							</div>
 						</div>
 						<div
-							class="timeline-item ${booking.status == 'Confirmed' || booking.status == 'Completed' ? 'completed' : ''}">
+							class="timeline-item ${booking.statusFlag == 'CONFIRMED' || booking.statusFlag == 'COMPLETED' ? 'completed' : ''}">
 							<div class="timeline-marker"></div>
 							<div class="timeline-content">
 								<strong>Confirmed</strong>
 								<p>
-									<c:if test="${booking.status == 'Confirmed'}">Ready for pickup</c:if>
-									<c:if test="${booking.status == 'Completed'}">Completed</c:if>
-									<c:if test="${booking.status == 'Pending'}">Awaiting confirmation</c:if>
-									<c:if test="${booking.status == 'Cancelled'}">Cancelled</c:if>
+									<c:if test="${booking.statusFlag == 'CONFIRMED'}">Ready for pickup</c:if>
+									<c:if test="${booking.statusFlag == 'COMPLETED'}">Completed</c:if>
+									<c:if test="${booking.statusFlag == 'PENDING'}">Awaiting confirmation</c:if>
+									<c:if test="${booking.statusFlag == 'CANCELLED'}">Cancelled</c:if>
 								</p>
 							</div>
 						</div>
 						<div
-							class="timeline-item ${booking.status == 'Completed' ? 'completed' : ''}">
+							class="timeline-item ${booking.statusFlag == 'COMPLETED' ? 'completed' : ''}">
 							<div class="timeline-marker"></div>
 							<div class="timeline-content">
 								<strong>Rental Period</strong>
@@ -288,13 +276,13 @@
 							</div>
 						</div>
 						<div
-							class="timeline-item ${booking.status == 'Completed' ? 'completed' : ''}">
+							class="timeline-item ${booking.statusFlag == 'COMPLETED' ? 'completed' : ''}">
 							<div class="timeline-marker"></div>
 							<div class="timeline-content">
 								<strong>Completed</strong>
 								<p>
-									<c:if test="${booking.status != 'Completed'}">Pending</c:if>
-									<c:if test="${booking.status == 'Completed'}">Booking finished</c:if>
+									<c:if test="${booking.statusFlag != 'COMPLETED'}">Pending</c:if>
+									<c:if test="${booking.statusFlag == 'COMPLETED'}">Booking finished</c:if>
 								</p>
 							</div>
 						</div>

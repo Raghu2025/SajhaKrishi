@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="jakarta.servlet.http.HttpSession"%>
 <%@ page import="jakarta.servlet.http.HttpServletRequest"%>
+<%@ page import="com.SajhaKrishi.constant.*"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,7 +39,7 @@
 					</c:if>
 				</div>
 
-				<form id="emailForm" action="/forgotPassword" method="post">
+				<form id="emailForm" action="${pageContext.request.contextPath}${ApiConstant.FORGET_PASSWORD}" method="post">
 					<input type="hidden" name="step" value="1" />
 					<div class="form-group">
 						<label for="email">Email Address</label>
@@ -66,7 +67,7 @@
 					<p>Enter the verification code sent to your email</p>
 				</div>
 
-				<form id="otpForm" action="/forgotPassword" method="post">
+				<form id="otpForm" action="${pageContext.request.contextPath}${ApiConstant.FORGET_PASSWORD}" method="post">
 					<input type="hidden" name="step" value="2" />
 					<div class="form-group">
 						<label for="otp">Verification Code</label>
@@ -104,19 +105,14 @@
 					<p>Create a strong password for your account</p>
 				</div>
 
-				<form id="passwordForm" action="/forgotPassword" method="post">
+				<form id="passwordForm" action="${pageContext.request.contextPath}${ApiConstant.FORGET_PASSWORD}" method="post">
 					<input type="hidden" name="step" value="3" />
 					<div class="form-group">
 						<label for="newPassword">New Password</label>
 						<input type="password" id="newPassword"
 							placeholder="Enter new password" name="newPassword" required />
 						<div class="password-strength">
-			<!-- 				<div class="strength-bar"></div>
-							<span class="strength-text">Strength: Weak</span> -->
 						</div>
-				<!-- 		<p class="password-hint">Password must be at least 8 characters
-							with uppercase, lowercase, and numbers</p>
-						<span class="input-error">Password requirements not met</span> -->
 					</div>
 
 					<div class="form-group">
@@ -143,7 +139,7 @@
 					<p>Your password has been reset. You can now login with your new
 						password.</p>
 					<div class="button-wrapper">
-						<a href="/login" class="btn-primary">Go to Login</a>
+						<a href="${pageContext.request.contextPath}${ApiConstant.LOGIN}" class="btn-primary">Go to Login</a>
 					</div>
 				</div>
 			</div>
@@ -152,7 +148,7 @@
 		<!-- Back to Login Link -->
 		<div class="other-link">
 			<p>
-				Remember your password? <a href="/login">Sign in here</a>
+				Remember your password? <a href="${pageContext.request.contextPath}${ApiConstant.LOGIN}">Sign in here</a>
 			</p>
 		</div>
 
@@ -163,8 +159,17 @@
 		// Resend OTP Timer
 		let resendTimer = 60;
 		const resendBtn = document.getElementById('resendBtn');
+		// Activate correct step based on server-side state
+		<% String _showStep = (String) request.getAttribute("showStep"); if (_showStep == null) _showStep = "1"; %>
+		const initialStep = "<%= _showStep %>";
 		document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-		document.getElementById('step3').classList.add('active');
+		if (initialStep === 'success') {
+			document.getElementById('successMessage').classList.add('active');
+		} else {
+			const el = document.getElementById('step' + initialStep);
+			if (el) el.classList.add('active');
+			else document.getElementById('step1').classList.add('active');
+		}
 		function startResendTimer() {
 			resendTimer = 60;
 			resendBtn.disabled = true;
@@ -186,7 +191,7 @@
 		// Resend OTP Click
 		resendBtn.addEventListener('click', function() {
 			// Send resend request to server
-			fetch('/forgotPassword?action=resendOTP', {
+			fetch('${pageContext.request.contextPath}${ApiConstant.FORGET_PASSWORD}?action=resendOTP', {
 				method: 'POST'
 			}).then(response => {
 				if (response.ok) {
@@ -234,16 +239,7 @@
 			}
 		});
 
-		// Validate Confirm Password
-		const confirmPasswordInput = document.getElementById('confirmPassword');
-		confirmPasswordInput.addEventListener('input', function() {
-			if (this.value !== passwordInput.value) {
-				this.classList.add('error');
-			} else {
-				this.classList.remove('error');
-			}
-		});
-
+	
 		// Show Alert
 		function showAlert(message, type) {
 			const alert = document.createElement('div');

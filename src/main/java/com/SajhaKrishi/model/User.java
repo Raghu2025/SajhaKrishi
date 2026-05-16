@@ -12,6 +12,12 @@ public class User extends Base {
 	private int roleId;
 	private String roleName;
 
+	// Login attempt tracking fields
+	private int failedLoginAttempts;
+	private String isLocked;
+	private Long accountLockedUntil;
+	private Long lastFailedLogin;
+
 	public User(int id, String fullName,String email, String password, String address, String district, int role, String phoneNumber) {
 		super(id, "A");
 		this.fullName = fullName;
@@ -21,6 +27,8 @@ public class User extends Base {
 		this.address = address;
 		this.district = district;
 		this.roleId = role;
+		this.failedLoginAttempts = 0;
+		this.isLocked = "N";
 	}
 
 	public User(String fullName,String email, String password, String address, String district, int role, String phoneNumber) {
@@ -31,6 +39,8 @@ public class User extends Base {
 		this.address = address;
 		this.district = district;
 		this.roleId = role;
+		this.failedLoginAttempts = 0;
+		this.isLocked = "N";
 	}
 
 
@@ -100,6 +110,38 @@ public class User extends Base {
 
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;
+	}
+
+	public int getFailedLoginAttempts() {
+		return failedLoginAttempts;
+	}
+
+	public void setFailedLoginAttempts(int failedLoginAttempts) {
+		this.failedLoginAttempts = failedLoginAttempts;
+	}
+
+	public String getIsLocked() {
+		return isLocked;
+	}
+
+	public void setIsLocked(String isLocked) {
+		this.isLocked = isLocked;
+	}
+
+	public Long getAccountLockedUntil() {
+		return accountLockedUntil;
+	}
+
+	public void setAccountLockedUntil(Long accountLockedUntil) {
+		this.accountLockedUntil = accountLockedUntil;
+	}
+
+	public Long getLastFailedLogin() {
+		return lastFailedLogin;
+	}
+
+	public void setLastFailedLogin(Long lastFailedLogin) {
+		this.lastFailedLogin = lastFailedLogin;
 	}
 
 

@@ -54,7 +54,15 @@ pageContext.setAttribute("currentUser", currentUser);
 					class="nav-item ${selectedNavItem == 'bookingList' ? 'active' : ''}">
 					<i class="fa fa-clipboard-list"></i> <span class="nav-text">
 						Booking List</span>
-				</a> <a href="#"
+				</a>
+				<c:if test="${not empty currentUser and currentUser.roleId == 1}">
+					<a href="${pageContext.request.contextPath}<%= api.ADMIN_USERS %>"
+						class="nav-item ${selectedNavItem == 'user' ? 'active' : ''}">
+						<i class="fa-solid fa-user"></i> <span class="nav-text">User</span>
+					</a>
+				</c:if>
+
+				<a href="${pageContext.request.contextPath}<%= api.PROFILE %>"
 					class="nav-item ${selectedNavItem == 'profile' ? 'active' : ''}">
 					<i class="fa-solid fa-user-gear"></i> <span class="nav-text">Profile</span>
 				</a>
